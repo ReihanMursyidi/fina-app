@@ -4,12 +4,17 @@ import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
+import { KeyboardEvent } from 'react';
 
 const formSchema = z.object({
    message: z.string().min(1, 'Message is required'),
 });
 
-export default function ChatbotTextarea() {
+export default function ChatbotTextarea({
+   sendMessage
+}: {
+   sendMessage: (message: string) => void;
+}) {
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
@@ -18,14 +23,26 @@ export default function ChatbotTextarea() {
    });
 
    function onSubmit(data: z.infer<typeof formSchema>) {
+      sendMessage(data.message);
       form.reset();
    }
+
+   function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+         e.preventDefault();
+         onSubmit(form.getValues());
+      }
+   }
+
    return (
-      <form className="flex flex-col p-2 bg-secondary rounded-2xl">
+      <form
+         onSubmit={form.handleSubmit(onSubmit)}
+         className="flex flex-col p-2 bg-secondary rounded-2xl"
+      >
          <Controller
             control={form.control}
             name="message"
-            render={({ field, fieldState }) => (
+            render={({ field }) => (
             <Field>
                <textarea
                   {...field}
@@ -33,10 +50,12 @@ export default function ChatbotTextarea() {
                   placeholder="Ask AI Advisor here"
                   autoComplete="off"
                   className="h-16 px-3 py-2 rounded-md resize-none focus:outline-none"
+                  onKeyDown={handleKeyDown}
                />
             </Field>
             )}
          />
+
          <div className="flex justify-between">
             <div></div>
             <div>
