@@ -1,19 +1,25 @@
 import { useForm, Controller } from 'react-hook-form';
-import { SendIcon } from 'lucide-react';
+import { BrainIcon, SendIcon } from 'lucide-react';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
-import { KeyboardEvent } from 'react';
+import { KeyboardEvent, Dispatch, SetStateAction } from 'react';
+import { Toggle } from '@/components/ui/toggle';
+import { cn} from '@/lib/utils';
 
 const formSchema = z.object({
    message: z.string().min(1, 'Message is required'),
 });
 
 export default function ChatbotTextarea({
-   sendMessage
+   sendMessage,
+   isThinking,
+   setIsThinking
 }: {
    sendMessage: (message: string) => void;
+   isThinking: boolean;
+   setIsThinking: Dispatch<SetStateAction<boolean>>;
 }) {
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
@@ -43,30 +49,42 @@ export default function ChatbotTextarea({
             control={form.control}
             name="message"
             render={({ field }) => (
-            <Field>
-               <textarea
-                  {...field}
-                  id="form-message"
-                  placeholder="Ask AI Advisor here"
-                  autoComplete="off"
-                  className="h-16 px-3 py-2 rounded-md resize-none focus:outline-none"
-                  onKeyDown={handleKeyDown}
-               />
-            </Field>
+               <Field>
+                  <textarea
+                     {...field}
+                     id="form-message"
+                     placeholder="Ask AI Advisor here"
+                     autoComplete="off"
+                     className="h-16 px-3 py-2 rounded-md resize-none focus:outline-none"
+                     onKeyDown={handleKeyDown}
+                  />
+               </Field>
             )}
          />
 
-         <div className="flex justify-between">
-            <div></div>
+         <div className="flex items-center justify-between">
             <div>
-            <Button
-               type="submit"
-               size="icon"
-               variant="ghost"
-               className="cursor-pointer text-primary hover:bg-primary/10 hover:text-primary disabled:bg-transparent"
-            >
-               <SendIcon className="size-5" />
-            </Button>
+               <Toggle
+                  size="sm"
+                  variant="outline"
+                  pressed={isThinking}
+                  onPressedChange={setIsThinking}
+                  className={cn('text-xs px-0 py-0 h-8 w-8', {
+                     'bg-primary/20!': isThinking,
+                  })}
+               >
+                  <BrainIcon className="size-4" />
+               </Toggle>
+            </div>
+            <div>
+               <Button
+                  type="submit"
+                  size="icon"
+                  variant="ghost"
+                  className="cursor-pointer text-primary hover:bg-primary/10 hover:text-primary disabled:bg-transparent"
+               >
+                  <SendIcon className="size-5" />
+               </Button>
             </div>
          </div>
       </form>
