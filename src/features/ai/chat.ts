@@ -2,6 +2,7 @@
 
 import { GoogleGenAI } from '@google/genai';
 import { ENVIRONMENT } from '@/config/environment';
+import { Conversation } from '@/app/types/ai';
 
 const ai = new GoogleGenAI({
    apiKey: ENVIRONMENT.googleApiKey,
@@ -45,13 +46,16 @@ export async function handleChat(message: string, isThinking: boolean) {
    return result;
 }
 
-export async function* handleChatStreaming(message: string, isThinking: boolean) {
+export async function* handleChatStreaming(
+   conversation: Conversation[],
+   isThinking: boolean,
+) {
    const response = await ai.models.generateContentStream({
       model: 'gemini-3-flash-preview',
-      contents: message,
+      contents: [...conversation],
       config: {
          thinkingConfig: {
-            includeThoughts: isThinking
+            includeThoughts: isThinking,
          },
       },
    });
