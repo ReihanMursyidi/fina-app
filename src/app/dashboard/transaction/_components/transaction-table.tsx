@@ -65,6 +65,10 @@ export default function TransactionTable({
       action: 'update' | 'delete';
    } | null>(null);
 
+   const sortedTransactions = [...(transactions?.data ?? [])].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+   );
+
    return (
       <Fragment>
          <Card className="w-full gap-2">
@@ -93,7 +97,7 @@ export default function TransactionTable({
                   </TableHeader>
                   <TableBody>
                      {!isLoading &&
-                        transactions?.data?.map((transaction, index) => (
+                        sortedTransactions.map((transaction, index) => (
                            <TableRow key={`tr-${transaction.id}`}>
                               <TableCell>{(page - 1) * limit + index + 1}</TableCell>
                               <TableCell className="font-medium">
