@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { BalanceCards } from './_components/balance_cards';
+import DashboardContent from './_components/dashboard-content';
 
 export const metadata: Metadata = {
   title: 'Fina - Dashboard',
@@ -16,9 +16,7 @@ export default function DashboardPage() {
           finances.
         </p>
       </section>
-      <section id="content">
-        <BalanceCards />
-      </section>
+      <DashboardContent />
     </div>
   );
 }
