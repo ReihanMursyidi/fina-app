@@ -8,15 +8,17 @@ const ai = new GoogleGenAI({
    apiKey: ENVIRONMENT.googleApiKey,
 });
 
-export async function handleChat(message: string, isThinking: boolean) {
-   console.log(isThinking);
+export async function handleChat(
+   conversation: Conversation[],
+   isThinking: boolean
+) {
    const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: message,
+      contents: [...conversation],
       config: {
          thinkingConfig: {
-            includeThoughts: isThinking
-         }
+            includeThoughts: isThinking,
+         },
       },
    });
 
@@ -57,6 +59,7 @@ export async function* handleChatStreaming(
          thinkingConfig: {
             includeThoughts: isThinking,
          },
+         systemInstruction: `Kamu adalah seorang financial advisor yang akan menjawab pertanyaan user`,
       },
    });
 
