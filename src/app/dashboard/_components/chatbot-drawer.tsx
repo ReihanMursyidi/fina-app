@@ -34,44 +34,7 @@ export default function ChatbotDrawer() {
    >([]);
    
    const [isThinking, setIsThinking] = useState<boolean>(false);
-
-   // const { mutate: handleChatMutation, isPending } = useMutation({
-   //    mutationFn: ({
-   //       message,
-   //       isThinking,
-   //    }: {
-   //       message: string;
-   //       isThinking: boolean;
-   //    }) => handleChat(message, isThinking),
-
-   //    onSuccess: (response) => {
-   //       let parts: {
-   //          text: string;
-   //          thought?: boolean;
-   //       }[] = [];
-
-   //       if (response?.thought !== '') {
-   //          parts = [
-   //             ...parts,
-   //             { thought: true, text: response?.thought || 'Terjadi kesalahan' },
-   //          ];
-   //       }
-
-   //       const botMessage = {
-   //          role: 'model',
-   //          parts: [...parts, { text: response?.answer || 'Terjadi kesalahan' }],
-   //       };
-   //       setConversation((prev) => [...prev, botMessage]);
-   //    },
-
-   //    onError: (error) => {
-   //       const botMessage = {
-   //          role: 'model',
-   //          parts: [{ text: 'Terjadi kesalahan' + error.message }]
-   //       };
-   //       setConversation((prev) => [...prev, botMessage]);
-   //    }
-   // });
+   const [mode, setMode] = useState<'general' | 'personal'>('general');
 
    const { mutate: handleChatMutation, isPending } = useMutation({
       mutationFn: async ({ isThinking }: { isThinking: boolean }) => {
@@ -84,7 +47,7 @@ export default function ChatbotDrawer() {
             const response = await handleChatStreaming(
                conversation,
                isThinking,
-               'personal',
+               mode,
             );
 
             for await (const chunk of response) {
@@ -123,7 +86,7 @@ export default function ChatbotDrawer() {
             const response = await handleChatStreaming(
                conversation,
                isThinking,
-               'personal',
+               mode,
             );
 
             for await (const chunk of response) {
@@ -282,6 +245,8 @@ export default function ChatbotDrawer() {
                   isThinking={isThinking}
                   setIsThinking={setIsThinking}
                   sendMessage={sendMessage} 
+                  mode={mode}
+                  setMode={setMode}
                />
             </DrawerFooter>
          </DrawerContent>

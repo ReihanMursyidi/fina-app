@@ -6,7 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 import { KeyboardEvent, Dispatch, SetStateAction } from 'react';
 import { Toggle } from '@/components/ui/toggle';
-import { cn} from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import { 
+   Select,
+   SelectTrigger,
+   SelectValue,
+   SelectContent,
+   SelectItem,
+} from '@/components/ui/select';
 
 const formSchema = z.object({
    message: z.string().min(1, 'Message is required'),
@@ -15,11 +22,15 @@ const formSchema = z.object({
 export default function ChatbotTextarea({
    sendMessage,
    isThinking,
-   setIsThinking
+   setIsThinking,
+   mode,
+   setMode,
 }: {
    sendMessage: (message: string) => void;
    isThinking: boolean;
    setIsThinking: Dispatch<SetStateAction<boolean>>;
+   mode: 'general' | 'personal';
+   setMode: Dispatch<SetStateAction<'general' | 'personal'>>;
 }) {
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
@@ -63,7 +74,7 @@ export default function ChatbotTextarea({
          />
 
          <div className="flex items-center justify-between">
-            <div>
+            <div className="flex items-center gap-2">
                <Toggle
                   size="sm"
                   variant="outline"
@@ -75,6 +86,18 @@ export default function ChatbotTextarea({
                >
                   <BrainIcon className="size-4" />
                </Toggle>
+               <Select
+                  value={mode}
+                  onValueChange={(value: 'general' | 'personal') => setMode(value)}
+               >
+                  <SelectTrigger size="sm" className="capitalize!">
+                     <SelectValue>{mode}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                     <SelectItem value="general">General</SelectItem>
+                     <SelectItem value="personal">Personal</SelectItem>
+                  </SelectContent>
+               </Select>
             </div>
             <div>
                <Button

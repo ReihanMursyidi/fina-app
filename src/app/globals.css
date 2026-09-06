@@ -173,6 +173,10 @@
     @apply text-xs;
   }
 
+  hr {
+    @apply border-t-0! border-b! pt-4;
+  }
+
   ul {
     @apply w-full space-y-1 text-wrap;
     li {
