@@ -14,6 +14,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
 import { handleWizardInput } from '@/features/ai/chat';
 import { createTransaction } from '@/features/transaction/action';
+import { generateEmbedding } from '@/features/ai/embedding';
 
 const formSchema = z.object({
    message: z.string().min(1, 'Message is required'),
@@ -34,10 +35,9 @@ export default function WizardInput({ refetch }: { refetch: () => void }) {
          if (!aiResponse) {
             throw new Error('Failed to process AI input');
          }
-
          return createTransaction(aiResponse);
       },
-      onSuccess: (response) => {
+      onSuccess: () => {
          toast.success('Transaction created successfully!');
          refetch();
          form.reset();
