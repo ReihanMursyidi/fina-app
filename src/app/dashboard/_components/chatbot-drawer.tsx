@@ -74,18 +74,19 @@ export default function ChatbotDrawer() {
    // });
 
    const { mutate: handleChatMutation, isPending } = useMutation({
-      mutationFn: async ({
-         isThinking,
-      }: {
-         isThinking: boolean;
-      }) => {
+      mutationFn: async ({ isThinking }: { isThinking: boolean }) => {
          if (isThinking) {
             setConversation((prev) => [
                ...prev,
-               { role: 'model', parts: [{ thought: true, text: '' }, { text: '' }] }
+               { role: 'model', parts: [{ thought: true, text: '' }, { text: '' }] },
             ]);
 
-            const response = await handleChatStreaming(conversation, isThinking);
+            const response = await handleChatStreaming(
+               conversation,
+               isThinking,
+               'personal',
+            );
+
             for await (const chunk of response) {
                setConversation((prev) => {
                   const newConversation = [...prev];
@@ -99,15 +100,15 @@ export default function ChatbotDrawer() {
                         {
                            ...parts[0],
                            text: chunk.startsWith('[thought]')
-                           ? parts[0].text + chunk.replace('[thought]', '')
-                           : parts[0].text,
+                              ? parts[0].text + chunk.replace('[thought]', '')
+                              : parts[0].text,
                         },
                         {
                            text: !chunk.startsWith('[thought]')
-                           ? parts[1].text + chunk
-                           : parts[1].text,
+                              ? parts[1].text + chunk
+                              : parts[1].text,
                         },
-                     ]
+                     ],
                   };
                   return newConversation;
                });
@@ -116,10 +117,14 @@ export default function ChatbotDrawer() {
          } else {
             setConversation((prev) => [
                ...prev,
-               { role: 'model', parts: [{ text: '' }] }
+               { role: 'model', parts: [{ text: '' }] },
             ]);
 
-            const response = await handleChatStreaming(conversation, isThinking);
+            const response = await handleChatStreaming(
+               conversation,
+               isThinking,
+               'personal',
+            );
 
             for await (const chunk of response) {
                setConversation((prev) => {
@@ -129,9 +134,10 @@ export default function ChatbotDrawer() {
                   newConversation[lastIndex] = {
                      ...newConversation[lastIndex],
                      parts: [
-                        { text: newConversation[lastIndex].parts[0].text + chunk }
-                     ]
+                        { text: newConversation[lastIndex].parts[0].text + chunk },
+                     ],
                   };
+                  
                   return newConversation;
                });
             }
@@ -142,17 +148,18 @@ export default function ChatbotDrawer() {
       onError: (error) => {
          const botMessage = {
             role: 'model',
-            parts: [{ text: 'Terjadi kesalahan' + error.message }]
+            parts: [{ text: 'Terjadi kesalahan: ' + error.message }],
          };
          setConversation((prev) => [...prev, botMessage]);
-      }
+      },
    });
 
    function sendMessage(message: string) {
       const newMessage = {
          role: 'user',
-         parts: [{ text: message }]
+         parts: [{ text: message }],
       };
+
       setConversation((prev) => [...prev, newMessage]);
       handleChatMutation({ isThinking });
    }

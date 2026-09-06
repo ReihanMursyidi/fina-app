@@ -3,6 +3,9 @@
 import { createAI } from '@/features/ai/instance';
 import { Conversation } from '@/app/types/ai';
 import z from 'zod';
+import { createClient } from '@/lib/supabase/server';
+import { generateEmbedding } from './embedding';
+import { Transaction } from '@/app/types/transaction';
 
 const SYSTEM_INSTRUCTION = `
    [Role]
@@ -55,14 +58,13 @@ const SYSTEM_INSTRUCTION = `
 
 export async function handleChat(
    conversation: Conversation[],
-   isThinking: boolean
+   isThinking: boolean,
 ) {
    const ai = createAI();
    const response = await ai.models.generateContent({
       model: 'gemini-3.5-flash',
       contents: [...conversation],
       config: {
-         systemInstruction: SYSTEM_INSTRUCTION,
          thinkingConfig: {
             includeThoughts: isThinking,
          },
@@ -71,7 +73,7 @@ export async function handleChat(
 
    const result = {
       thought: '',
-      answer: ''
+      answer: '',
    };
 
    if (isThinking) {
@@ -95,50 +97,150 @@ export async function handleChat(
    return result;
 }
 
-export async function* handleChatStreaming(
-   conversation: Conversation[],
-   isThinking: boolean,
-) {
+async function generalChat(conversation: Conversation[], isThinking?: boolean) {
    const ai = createAI();
-   const response = await ai.models.generateContentStream({
+   const response = await ai.models.generateContent({
       model: 'gemini-3.5-flash',
       contents: [...conversation],
+      config: {
+         systemInstruction: SYSTEM_INSTRUCTION,
+         thinkingConfig: {
+            includeThoughts: isThinking,
+         },
+         temperature: 0.2,
+         topK: 5,
+         topP: 0.1,
+         maxOutputTokens: 2048,
+         stopSequences: ['\n\n\n', '###', 'User:', 'Pengguna:'],
+      },
+   });
+   return response;
+}
+
+async function personalizedChat(
+   query: string, 
+   historyChat?: Conversation[], 
+   isThinking?: boolean,
+) {
+   const ai = createAI();
+
+   const supabase = await createClient();
+
+   const queryEmbedding = await generateEmbedding(query);
+   
+   const {data, error} = await supabase.rpc('match_transactions', {
+      query_embedding: queryEmbedding,
+      match_threshold: 0.3,
+      match_count: 15,
+   });
+
+   if (error) {
+      throw new Error('Failed to perform vector search.');
+   }
+
+   let contextData = '';
+
+   if(!data || data.length === 0) {
+      contextData = 'No transactions found that are similar or relevant';
+   } else {
+      contextData = data.map((transaction: Transaction) => {
+         return JSON.stringify(transaction);
+      })
+      .join('\n');
+   }
+
+   const prompt = `
+      <role>
+         You are an AI Financial Analyst. You are helping the user analyze 
+         their financial data using the RAG (Retrieval-Augmented Generation) technique.
+      </role>
+      <input>
+         User Question: "${query}"
+      </input>
+      <context>
+         Relevant Transaction data from the database (Ordered from most relevant):
+         ${contextData}
+      </context>
+      <instruction>
+         - Answer the user question ONLY based on the relevant transaction data above.
+         - If there are calculations (total spending, average, etc), calculate them accurately based on the data.
+         - Provide the answer in a neat, professional, yet easy-to-understand markdown format.
+         - If there is no relevant data at all, state that the data is not availble in the history.
+         - If user question is general and not need a data, response generally.
+      </instruction>
+      <constraints>
+         - Don't answer in table format instead of markdown.
+      </contraints>
+   `;
+
+   const response = await ai.models.generateContentStream({
+      model: 'gemini-3.5-flash',
+      contents: [
+         ...(historyChat ?? []),
+         { role: 'user', parts: [{ text: prompt }] },
+      ],
       config: {
          thinkingConfig: {
             includeThoughts: isThinking,
          },
-         systemInstruction: SYSTEM_INSTRUCTION,
-         
-         temperature: 0.2, // 0.0 - 2.0
-         topK: 4, // 1 - 40
-         topP: 0.1, // 0.0 - 1.0
-         maxOutputTokens: 2048,
-         stopSequences: ['\n\n\n', '###', 'User:', 'Pengguna:'],
-         // repetition penalties
-         // presencePenalty: 1.5,
-         // frequencyPenalty: 1.5,
       },
    });
 
-   if (isThinking) {
-      for await (const chunk of response) {
-         const parts = chunk.candidates?.[0]?.content?.parts;
-         if (parts) {
-            for (const part of parts) {
-               if (!part.text) {
-                  continue;
-               } else if (part.thought) {
-                  yield `[thought]${part.text}`;
-               } else {
-                  yield part.text;
+   return response;
+}
+
+export async function* handleChatStreaming(
+   conversation: Conversation[],
+   isThinking: boolean,
+   mode: 'general' | 'personal',
+) {
+   let response;
+
+   if (mode === 'general') {
+      response = await generalChat(conversation, isThinking);
+   } else {
+      response = await personalizedChat(
+         conversation[conversation.length - 1].parts[0].text,
+         conversation.slice(0, -1),
+         isThinking,
+      );
+   }
+
+   // Type Guard: Beritahu TypeScript untuk mengeksekusi blok ini 
+   // HANYA JIKA response terbukti sebagai stream (AsyncGenerator)
+   if (Symbol.asyncIterator in response) {
+      if (isThinking) {
+         for await (const chunk of response) {
+            const parts = chunk.candidates?.[0]?.content?.parts;
+            if (parts) {
+               for (const part of parts) {
+                  if (!part.text) {
+                     continue;
+                  } else if (part.thought) {
+                     yield `[thought]${part.text}`;
+                  } else {
+                     yield part.text;
+                  }
                }
+            }
+         }
+      } else {
+         for await (const chunk of response) {
+            if (chunk.text) {
+               yield chunk.text;
             }
          }
       }
    } else {
-      for await (const chunk of response) {
-         if (chunk.text) {
-            yield chunk.text;
+      // Fallback jika API tiba-tiba mengembalikan respons tunggal (bukan stream)
+      const parts = response.candidates?.[0]?.content?.parts;
+      if (parts) {
+         for (const part of parts) {
+            if (part.thought && isThinking) {
+               yield `[thought]${part.text}`;
+            } else if (part.text) {
+               yield part.text;
+            }
          }
       }
    }

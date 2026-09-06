@@ -1,5 +1,6 @@
 'use server';
 
+import { Conversation } from '@/app/types/ai';
 import { createAI } from './instance';
 
 export async function generateEmbedding(contents: string) {
@@ -27,3 +28,4 @@ export async function generateEmbedding(contents: string) {
       throw error;
    }
 }
+
