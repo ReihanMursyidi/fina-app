@@ -12,9 +12,7 @@ import z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
-import { handleWizardInput } from '@/features/ai/chat';
-import { createTransaction } from '@/features/transaction/action';
-import { generateEmbedding } from '@/features/ai/embedding';
+import { handleWizardTools } from '@/features/ai/wizard';
 
 const formSchema = z.object({
    message: z.string().min(1, 'Message is required'),
@@ -29,16 +27,9 @@ export default function WizardInput({ refetch }: { refetch: () => void }) {
    });
 
    const { mutate, isPending } = useMutation({
-      mutationFn: async (message: string) => {
-         const aiResponse = await handleWizardInput(message);
-
-         if (!aiResponse) {
-            throw new Error('Failed to process AI input');
-         }
-         return createTransaction(aiResponse);
-      },
-      onSuccess: () => {
-         toast.success('Transaction created successfully!');
+      mutationFn: handleWizardTools,
+      onSuccess: (response) => {
+         toast.success(response);
          refetch();
          form.reset();
       },

@@ -41,13 +41,16 @@ export async function getTransactions(params?: {
       .from('transactions')
       .select('id, amount, type, description, date, category', {
          count: 'exact',
+      })
+      .order('date').order('created_at', {
+         ascending: false,
       });
 
    if (search) {
       query = query.ilike('description', `%${search}%`);
    }
 
-  const from = (page - 1) * limit;
+   const from = (page - 1) * limit;
    const to = from + limit - 1;
 
    const { data, error, count } = await query.range(from, to);

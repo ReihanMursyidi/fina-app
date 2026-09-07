@@ -89,7 +89,7 @@ export default function CreateTransactionCard({
    };
 
    return (
-      <Card className="w-full gap-2">
+      <Card className="w-full gap-2 h-fit">
          <CardHeader className="gap-0">
             <CardTitle>Create Transaction</CardTitle>
             <CardDescription>Add a new financial activity.</CardDescription>
@@ -101,21 +101,22 @@ export default function CreateTransactionCard({
                      control={form.control}
                      name="amount"
                      render={({ field, fieldState }) => (
-                     <Field className="gap-1">
-                        <FieldLabel htmlFor="form-amount">Amount</FieldLabel>
-                        <Input
-                           {...field}
-                           id="form-amount"
-                           placeholder="0,00"
-                           autoComplete="off"
-                           type="number"
-                        />
-                        {fieldState.invalid && (
-                           <FieldError errors={[fieldState.error]} />
-                        )}
-                     </Field>
+                        <Field className="gap-1">
+                           <FieldLabel htmlFor="form-amount">Amount</FieldLabel>
+                           <Input
+                              {...field}
+                              id="form-amount"
+                              placeholder="0,00"
+                              autoComplete="off"
+                              type="number"
+                           />
+                           {fieldState.invalid && (
+                              <FieldError errors={[fieldState.error]} />
+                           )}
+                        </Field>
                      )}
                   />
+
                   <Controller
                      control={form.control}
                      name="type"
@@ -137,6 +138,7 @@ export default function CreateTransactionCard({
                         </Field>
                      )}
                   />
+
                   <Controller
                      control={form.control}
                      name="category"
@@ -167,6 +169,7 @@ export default function CreateTransactionCard({
                      </Field>
                      )}
                   />
+
                   <Controller
                      control={form.control}
                      name="date"
@@ -185,6 +188,7 @@ export default function CreateTransactionCard({
                         </Field>
                      )}
                   />
+
                   <Controller
                      control={form.control}
                      name="description"
@@ -205,6 +209,7 @@ export default function CreateTransactionCard({
                         </Field>
                      )}
                   />
+                  
                   <Button
                      size="lg"
                      type="submit"
