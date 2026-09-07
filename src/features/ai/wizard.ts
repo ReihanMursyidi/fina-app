@@ -3,7 +3,8 @@
 import z from 'zod';
 import { createAI } from './instance';
 import { FunctionDeclaration, Type } from '@google/genai';
-import { createTransaction } from '../transaction/action';
+import { createTransaction, deleteTransaction } from '../transaction/action';
+import { findEmbedding } from './embedding';
 
 const transactionSchema = z.object({
    amount: z.number().default(0).describe('Transaction nominal'),
@@ -17,8 +18,8 @@ const transactionSchema = z.object({
          'Entertainment',
          'Salary',
          'Others',
-      ])
-      .describe('Category of transaction'),
+   ])
+   .describe('Category of transaction'),
    description: z.string().describe('Short text for describing transaction'),
    date: z.string().describe('the date of transaction in YYYY-MM-DD format'),
 });
@@ -49,7 +50,6 @@ export async function handleWizardInput(message: string) {
       Respond with only the raw JSON object, no markdown blocks, no text before or after.
    </outputFormat>
    `;
-
    const ai = createAI();
    const response = await ai.models.generateContent({
       model: 'gemini-3.5-flash',
@@ -64,10 +64,49 @@ export async function handleWizardInput(message: string) {
    if (transaction.amount <= 0) {
       throw new Error('Cannot create transaction with invalid amount');
    }
+
    await createTransaction(transaction);
 
    return 'Create transaction success';
 }
+
+const transactionProperties = {
+   id: {
+      type: Type.STRING,
+      description: 'The unique identifier of the transaction',
+   },
+   amount: {
+      type: Type.NUMBER,
+      description: 'The amount of the transaction',
+   },
+   type: {
+      type: Type.STRING,
+      enum: ['income', 'expense'],
+      description: 'The type of the transaction, either "income" or "expense"',
+   },
+   category: {
+      type: Type.STRING,
+      enum: [
+         'Food & Drink',
+         'Shopping',
+         'Housing',
+         'Transportation',
+         'Entertainment',
+         'Salary',
+         'Others',
+      ],
+      description: 'The category of the transaction',
+   },
+   description: {
+      type: Type.STRING,
+      description:
+         'A brief description of the transaction, first letter capitalized',
+   },
+   date: {
+      type: Type.STRING,
+      description: 'The date of the transaction in the format "YYYY-MM-DD"',
+   },
+};
 
 const createTransactionDeclaration: FunctionDeclaration = {
    name: 'create_transaction',
@@ -75,41 +114,18 @@ const createTransactionDeclaration: FunctionDeclaration = {
       "Create a new transaction in the user's financial history based on the provided details.",
    parameters: {
       type: Type.OBJECT,
-      properties: {
-         amount: {
-            type: Type.NUMBER,
-            description: 'The amount of the transaction'
-         },
-         type: {
-            type: Type.STRING,
-            enum: ['income', 'expense'],
-            description: 
-               "The type of the transaction, either 'income' or 'expense'",
-         },
-         category: {
-            type: Type.STRING,
-            enum: [
-               'Food & Drink',
-               'Shopping',
-               'Housing',
-               'Transportation',
-               'Entertainment',
-               'Salary',
-               'Others',
-            ],
-            description: 
-               "The type of the transaction",
-         },
-         description: {
-            type: Type.STRING,
-            description: 'A brief description of the transaction, first letter capitalized',
-         },
-         date: {
-            type: Type.STRING,
-            description: 'The date of the transaction in the format of "YYYY-MM-DD"'
-         }
-      },
+      properties: transactionProperties,
       required: ['amount', 'description', 'type', 'category', 'date']
+   },
+};
+
+const deleteTransactionDeclaration: FunctionDeclaration = {
+   name: 'delete_transaction',
+   description:
+      "Delete an existing transaction from user's financial history based on the provided data.",
+   parameters: {
+      type: Type.OBJECT,
+      properties: transactionProperties,
    },
 };
 
@@ -136,7 +152,10 @@ export async function handleWizardTools(message: string) {
       config: {
          tools: [
             {
-               functionDeclarations: [createTransactionDeclaration],
+               functionDeclarations: [
+                  createTransactionDeclaration,
+                  deleteTransactionDeclaration
+               ],
             },
          ],
       },
@@ -145,18 +164,24 @@ export async function handleWizardTools(message: string) {
    if (response.functionCalls && response.functionCalls.length > 0) {
       await Promise.all(
          response.functionCalls.map(async (functionCall) => {
+            const args = functionCall.args;
+            if (!args) {
+               throw new Error('No arguments provided for action');
+            }
+
             switch (functionCall.name) {
                case 'create_transaction':
-                  const args = functionCall.args;
-                  if (!args) {
-                     throw new Error('No arguments provided for create transaction');
-                  }
-      
                   const transaction = transactionSchema.parse(args);
                   if (transaction.amount <= 0) {
                      throw new Error('Cannot create transaction with invalid amount');
                   }
                   await createTransaction(transaction);
+                  break;
+
+               case 'delete_transaction':
+                  const data = await findEmbedding(JSON.stringify(args), 0.3, 1);
+                  const deletedData = data[0];
+                  await deleteTransaction(deletedData.id);
                   break;
                default:
                   throw new Error(`Unknown function call`);
