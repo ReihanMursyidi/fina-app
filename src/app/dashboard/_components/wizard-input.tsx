@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
 import { handleWizardTools } from '@/features/ai/wizard';
+import Markdown from 'react-markdown';
 
 const formSchema = z.object({
    message: z.string().min(1, 'Message is required'),
@@ -29,7 +30,11 @@ export default function WizardInput({ refetch }: { refetch: () => void }) {
    const { mutate, isPending } = useMutation({
       mutationFn: handleWizardTools,
       onSuccess: (response) => {
-         toast.success(response);
+         toast.success(
+            <div className="response-ai w-full!">
+               <Markdown>{response}</Markdown>
+            </div>
+         );
          refetch();
          form.reset();
       },
