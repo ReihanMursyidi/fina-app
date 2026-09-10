@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { updateTransaction } from "@/features/transaction/action";
+import { CATEGORIES } from "@/constants/transaction-constant";
 
 const formSchema = z.object({
    amount: z.string().min(1, 'Amount is required'),
@@ -179,19 +180,11 @@ export default function UpdateTransactionDialog({
                                     <SelectValue placeholder="Select category" />
                                  </SelectTrigger>
                                  <SelectContent>
-                                    <SelectItem value="Food & Drink">
-                                       Food & Drink
-                                    </SelectItem>
-                                    <SelectItem value="Transportation">
-                                       Transportation
-                                    </SelectItem>
-                                    <SelectItem value="Entertainment">
-                                       Entertainment
-                                    </SelectItem>
-                                    <SelectItem value="Shopping">Shopping</SelectItem>
-                                    <SelectItem value="Housing">Housing</SelectItem>
-                                    <SelectItem value="Salary">Salary</SelectItem>
-                                    <SelectItem value="Other">Other</SelectItem>
+                                    {CATEGORIES.map((category) => (
+                                       <SelectItem value={category} key={category}>
+                                          {category}
+                                       </SelectItem>
+                                    ))}  
                                  </SelectContent>
                               </Select>
                               {fieldState.invalid && (
