@@ -18,6 +18,12 @@ export async function extractReceiptData(formData: FormData) {
          role: 'user',
          parts: [
             {
+               inlineData : {
+                  mimeType,
+                  data: base64Data,
+               }
+            },
+            {
                text: `
                   <role>
                      You are an AI finance assitant, who can extract transaction details from receipt.
@@ -41,12 +47,6 @@ export async function extractReceiptData(formData: FormData) {
                   </outputFormat>
                `,
             },
-            {
-               inlineData : {
-                  mimeType,
-                  data: base64Data,
-               }
-            }
          ]
       }
    ];
@@ -63,6 +63,8 @@ export async function extractReceiptData(formData: FormData) {
    const transaction = transactionSchema.parse(JSON.parse(`${response.text}`));
 
    return transaction;
+
+   // Save to DB
    // await createTransaction(transaction);
    // return 'Create transaction success';
 }
