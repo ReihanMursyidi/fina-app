@@ -193,7 +193,7 @@ export async function handleWizardTools(message: string) {
          
          contents.push({
             role: 'user',
-            parts: functionResponseParts
+            parts: functionResponseParts,
          });
       } else {
          running = false;

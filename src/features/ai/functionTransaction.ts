@@ -54,7 +54,7 @@ export const createTransactionDeclaration: FunctionDeclaration = {
    parameters: {
       type: Type.OBJECT,
       properties: transactionProperties,
-      required: ['amount', 'description', 'type', 'category', 'date']
+      required: ['amount', 'description', 'type', 'category', 'date'],
    },
 };
 
