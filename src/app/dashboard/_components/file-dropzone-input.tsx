@@ -45,7 +45,8 @@ export default function FileDropzoneInput({setValues}: {
       if(
          !file.type.endsWith('pdf') && 
          !file.type.startsWith('image') &&
-         !file.type.startsWith('video')
+         !file.type.startsWith('video') &&
+         !file.type.startsWith('audio')
       ) {
          toast.error('File type not supported');
          return;
@@ -88,7 +89,7 @@ export default function FileDropzoneInput({setValues}: {
             type="file" 
             ref={fileInputRef} 
             className='hidden' 
-            accept=".pdf, image/*, video/*"
+            accept=".pdf, image/*, video/*, audio/*"
             onChange={(e) => e.target.files && processFile(e.target.files[0])}
          />
 
