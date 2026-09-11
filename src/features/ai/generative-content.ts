@@ -4,6 +4,9 @@ import { Type } from "@google/genai";
 import { findEmbedding } from "./embedding";
 import { createAI } from "./instance";
 import { Transaction } from "@/app/types/transaction";
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 
 export async function generateChart(request: string) {
    const ai = createAI();
@@ -178,4 +181,75 @@ export async function generateImage(request: string) {
    }
 
    return base64Image;
+}
+
+export async function generateVideo(request: string) {
+   const ai = createAI();
+
+   const data = await findEmbedding(request, 0.5, 50);
+
+   let contextData = '';
+
+   if (!data || data.length === 0) {
+      contextData = 'No transactions found that are similar or relevant to the request';
+   } else {
+      contextData = data
+         .map((transaction: Transaction) => {
+            return JSON.stringify(transaction);
+         })
+         .join('\n');
+   }
+
+   const contents = `
+      <role>
+         You are an AI Financial Analyst and motion designer. Your task is to analyze transactions in <context> 
+         and generate a video for infographic and conpectual dashboard in bento grid style that directly response the user's request.
+      </role>
+      <input>
+         User request: "${request}"
+      </input>
+      <instruction>
+         1. Analyze and filter: read the user's request and extract only the relevant transactions from the provided <context>.
+         2. Grouping & Summarization: 
+         - if the query is about expense type, group by category name.
+         - If it's about time trend, group by date, day, or month.
+         - If it's comparing income and expenses, group by type.
+         - Limit the data to the top 10 most significant groups to ensure the chart is clean on the dashboard, Group smaller items into "Others" if necessary.
+         3. Values & Calculations: Ensure all currency values are aggregated correctly. Use positive number for visual chart representation.
+         4. Create a video outstanding with bento-style design.
+         5. Maximum video duration is 10 second.
+      </instruction>
+      <context>
+         Current Date : ${new Date().toISOString()}
+         Data transaction : ${contextData}
+      </context>
+   `;
+
+   let operation = await ai.models.generateVideos({
+      model: 'veo-3.1-lite-generate-preview',
+      prompt: contents,
+   });
+
+   while (!operation.done) {
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+      operation = await ai.operations.getVideosOperation({
+         operation: operation,
+      });
+   }
+
+   const generatedVideo = operation.response?.generatedVideos?.[0]?.video;
+   if (!generatedVideo) {
+      throw new Error('Failed to generate video');
+   }
+
+   const tempPath = path.join(os.tmpdir(), `temp-video-${Date.now()}.mp4`);
+
+   await ai.files.download({
+      file: generatedVideo,
+      downloadPath: tempPath,
+   });
+
+   const videoBuffer = fs.readFileSync(tempPath);
+   const base64Video = `data:${generatedVideo.mimeType || 'video/mp4'};base64,${videoBuffer.toString('base64')}`;
+   return base64Video;
 }
