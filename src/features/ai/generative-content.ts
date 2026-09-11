@@ -96,3 +96,86 @@ export async function generateChart(request: string) {
 
    return chartData;
 };
+
+export async function generateImage(request: string) {
+   const ai = createAI();
+
+   const data = await findEmbedding(request, 0.5, 50);
+
+   let contextData = '';
+
+   if (!data || data.length === 0) {
+      contextData =
+         'No transactions found that are similar or relevant to the request';
+   } else {
+      contextData = data
+         .map((transaction: Transaction) => {
+            return JSON.stringify(transaction);
+         })
+         .join('\n');
+   }
+
+   const contents = {
+      role: 'user',
+      parts: [
+         {
+            text: `
+               <role>
+                  You are an AI Financial Analyst and Data illustrator. Your task is to analyze transactions in <context> 
+                  and generate an image for infographic and conpectual dashboard in bento grid style that directly response the user's request.
+               </role>
+               <input>
+                  User request: "${request}"
+               </input>
+               <instruction>
+                  1. Analyze and filter: read the user's request and extract only the relevant transactions from the provided <context>.
+                  2. Grouping & Summarization: 
+                     - if the query is about expense type, group by category name.
+                     - If it's about time trend, group by date, day, or month.
+                     - If it's comparing income and expenses, group by type.
+                     - Limit the data to the top 10 most significant groups to ensure the chart is clean on the dashboard, Group smaller items into "Others" if necessary.
+                  3. Values & Calculations: Ensure all currency values are aggregated correctly. Use positive number for visual chart representation.
+                  4. Create a visually outstanding bento-style design
+               </instruction>
+               <context>
+                  Current Date : ${new Date().toISOString()}
+                  Data transaction : ${contextData}
+               </context>
+            `,
+         },
+      ],
+   };
+
+   const response = await ai.models.generateContent({
+      model: 'gemini-3.1-flash-image',
+      contents,
+      config: {
+         imageConfig: {
+            aspectRatio: '16:9',
+         },
+      },
+   });
+
+   const candidates = response.candidates;
+   if (!candidates || candidates.length === 0) {
+      throw new Error('Failed to generate image');
+   }
+
+   const parts = candidates[0].content?.parts;
+   if (!parts) {
+      throw new Error('Failed to generate image');
+   }
+
+   let base64Image = '';
+
+   for (const part of parts) {
+      if (part.inlineData) {
+         const imageData = part.inlineData.data;
+         if (imageData) {
+            base64Image = `data:${part.inlineData.mimeType || 'image/png'};base64,${imageData}`;
+         }
+      }
+   }
+
+   return base64Image;
+}

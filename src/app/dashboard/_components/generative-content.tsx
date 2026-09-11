@@ -10,10 +10,11 @@ import {
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 
-import { generateChart } from '@/features/ai/generative-content';
-import { convertToIDR } from '@/lib/utils';
+import { generateChart, generateImage } from '@/features/ai/generative-content';
+import { cn, convertToIDR } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import Image from 'next/image';
 
 import { 
    Bar, 
@@ -33,6 +34,7 @@ import z from 'zod';
 
 import { 
    ChartPieIcon, 
+   ImageIcon, 
    Loader2Icon, 
    Sparkles, 
    SparklesIcon 
@@ -60,6 +62,9 @@ export default function GenerativeContent() {
       type: 'chart';
       chartType: 'bar' | 'pie';
       data: { name: string; value: number }[];
+   } | {
+      type: 'image';
+      data: string;
    } | null>(null);
 
    const form = useForm<z.infer<typeof formSchema>>({
@@ -75,6 +80,12 @@ export default function GenerativeContent() {
             case 'chart':
                const result = await generateChart(request);
                return {...result, type: 'chart'};
+            case 'image':
+               const resultImage = await generateImage(request);
+               return {
+                  type: 'image',
+                  data: resultImage,
+               };
             default:
                return null;
          }
@@ -104,63 +115,69 @@ export default function GenerativeContent() {
    console.log(result);
 
    return (
-      <Card className='relative w-full overflow-hidden'>
+      <Card className="relative w-full overflow-hidden">
          <CardHeader>
-            <div className='flex flex-col justify-between gap-4 lg:flex-row lg:items-center'>
-               <CardTitle>
-                  <SparklesIcon className='size-5 text-primary' />
+            <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
+               <CardTitle className="flex items-center gap-2 text-xl">
+                  <SparklesIcon className="size-5 text-primary" />
                   Generative AI Insight
                </CardTitle>
-
-               <form 
-                  className= 'flex flex-col gap-2 lg:flex-row lg:items-center'
-                  onSubmit={form.handleSubmit(onSubmit)}
-               >
-                  <ButtonGroup>
-                     <Button
-                        variant={insightType === "chart" ? "default" : "secondary"}
-                        type="button"
-                        size="icon"
-                        onClick={() => setInsightType('chart')}
-                     >
-                        <ChartPieIcon />
-                     </Button>
-                  </ButtonGroup>
-                  <div className='flex flex-row gap-2'>
-                     <Controller
-                        control={form.control} 
-                        name="request" 
-                        render={({field}) => (
-                           <Field>
-                              <Input 
-                                 {...field}
-                                 id='form-request'
-                                 placeholder="Insert your request..."
-                                 className='w-50 lg:w-70'
-                                 onKeyDown={handleKeyDown}
-                                 disabled={isPending}
-                              />
-                           </Field>
-                        )}
-                     />
-                     <Button type='submit' disabled={isPending}>
-                        {isPending ? (
-                           <Loader2Icon className='size-4 animate-spin' />
-                        ) : (
-                           <Sparkles className='size-4' />
-                        )}
-                        <span className='hidden lg:inline'>
-                           {result ? "Update" : "Generate"}
-                        </span>
-                     </Button>
-                  </div>
-               </form>
+            <form
+               className="flex flex-col gap-2 lg:flex-row lg:items-center"
+               onSubmit={form.handleSubmit(onSubmit)}
+            >
+               <ButtonGroup>
+                  <Button
+                     variant={insightType === 'chart' ? 'default' : 'secondary'}
+                     type="button"
+                     size="icon"
+                     onClick={() => setInsightType('chart')}
+                  >
+                     <ChartPieIcon />
+                  </Button>
+                  <Button
+                     variant={insightType === 'image' ? 'default' : 'secondary'}
+                     type="button"
+                     size="icon"
+                     onClick={() => setInsightType('image')}
+                  >
+                     <ImageIcon />
+                  </Button>
+               </ButtonGroup>
+               <div className="flex flex-row gap-2">
+                  <Controller
+                     control={form.control}
+                     name="request"
+                     render={({ field }) => (
+                        <Field>
+                           <Input
+                              {...field}
+                              id="form-request"
+                              placeholder="Insert your request..."
+                              className="w-50 lg:w-70"
+                              onKeyDown={handleKeyDown}
+                              disabled={isPending}
+                           />
+                        </Field>
+                     )}
+                  />
+                  <Button type="submit" disabled={isPending}>
+                     {isPending ? (
+                        <Loader2Icon className="size-4 animate-spin" />
+                     ) : (
+                        <Sparkles className="size-4" />
+                     )}
+                     <span className="hidden lg:inline">
+                        {result ? 'Update' : 'Generate'}
+                     </span>
+                  </Button>
+               </div>
+            </form>
             </div>
          </CardHeader>
-
-         <CardContent className='h-75'>
+         <CardContent className={cn(result?.type === 'chart' && 'h-70')}>
             {error && (
-               <div className='p-4 text-sm border rounded-lg text-destructive text-desctructive/50 bg-destructive/10'>
+               <div className="p-4 text-sm border rounded-lg text-destructive border-destructive/50 bg-destructive/10">
                   {error.message}
                </div>
             )}
@@ -168,36 +185,35 @@ export default function GenerativeContent() {
             {!result ? (
                <div className="flex items-center justify-center border-2 border-dashed rounded-lg h-70">
                   {isPending ? (
-                     <div>
+                     <div className="flex flex-col items-center">
                         <Loader2Icon className="size-8 animate-spin" />
                         <span>AI is generating insight</span>
                      </div>
-                     ) : (
+                  ) : (
                      <span className="text-lg text-muted-foreground/50">
                         Generate insight content with AI
                      </span>
                   )}
                </div>
             ) : (
-               <div className='h-full'>
+               <div className="h-full">
                   {result.type === 'chart' && (
-                     <ResponsiveContainer width='100%' height='100%'>
-         
+                     <ResponsiveContainer width="100%" height="100%">
                         {result.chartType === 'bar' ? (
                            <BarChart data={result.data}>
                               <XAxis
-                                 dataKey='name' 
-                                 stroke='#888888' 
-                                 fontSize={10} 
-                                 tickLine={false} 
-                                 axisLine={false} 
+                                 dataKey="name"
+                                 stroke="#888888"
+                                 fontSize={10}
+                                 tickLine={false}
+                                 axisLine={false}
                               />
                               <YAxis
-                                 stroke='#888888' 
-                                 fontSize={10} 
-                                 tickLine={false} 
-                                 axisLine={false} 
-                                 tickFormatter={(value) => 
+                                 stroke="#888888"
+                                 fontSize={10}
+                                 tickLine={false}
+                                 axisLine={false}
+                                 tickFormatter={(value) =>
                                     convertToIDR(Number(value) || 0)
                                  }
                                  style={{
@@ -211,52 +227,64 @@ export default function GenerativeContent() {
                                  }}
                               />
                               <Bar
-                                 dataKey='value' 
-                                 fill='var(--color-primary)' 
-                                 radius={[4,4,0,0]}
+                                 dataKey="value"
+                                 fill="var(--color-primary)"
+                                 radius={[4, 4, 0, 0]}
                               />
                            </BarChart>
                         ) : (
                            <PieChart>
                               <Pie
-                                 data={result.data} 
-                                 cx='50%' 
-                                 cy='50%' 
-                                 labelLine={false} 
+                                 data={result.data}
+                                 cx="50%"
+                                 cy="50%"
+                                 labelLine={false}
                                  label={(props) => (
                                     <text
-                                       x={props.x} 
-                                       y={props.y} 
+                                       x={props.x}
+                                       y={props.y}
                                        fill={COLORS[props.index % COLORS.length]}
                                        textAnchor={props.textAnchor}
-                                       dominantBaseline='central'
+                                       dominantBaseline="central"
                                        fontSize={14}
                                     >
                                        {`${props.name} (${((props.percent || 0) * 100).toFixed(0)}%)`}
                                     </text>
-                              )}
-                              outerRadius={100}
-                              dataKey='value'
-                              shape={(props, index) => (
-                                 <Sector
-                                    {...props}
-                                    fill={COLORS[index % COLORS.length]}
-                                 />
-                              )}
-                           />
-                           <Tooltip
-                              formatter={(value) => convertToIDR(Number(value) || 0)}
-                              contentStyle={{
-                                 borderRadius: '8px',
-                              }}
-                           />
+                                 )}
+                                 outerRadius={100}
+                                 dataKey="value"
+                                 shape={(props, index) => (
+                                    <Sector
+                                       {...props}
+                                       fill={COLORS[index % COLORS.length]}
+                                    />
+                                 )}
+                              />
+                              <Tooltip
+                                 formatter={(value) => convertToIDR(Number(value) || 0)}
+                                 contentStyle={{
+                                    borderRadius: '8px',
+                                 }}
+                              />
                            </PieChart>
                         )}
                      </ResponsiveContainer>
+                  )}
+
+                  {result.type === 'image' && (
+                     <div className="flex items-center">
+                        <Image
+                           width={1920}
+                           height={1080}
+                           src={result.data}
+                           alt="Generate Image"
+                           className="rounded-xl"
+                        />
+                     </div>
                   )}
                </div>
             )}
          </CardContent>
       </Card>
-   )
+   );  
 }
