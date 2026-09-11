@@ -4,7 +4,13 @@ import { createAI } from '@/features/ai/instance';
 import { Conversation } from '@/app/types/ai';
 import { findEmbedding, generateEmbedding } from './embedding';
 import { getTransactionDeclaration } from './functionTransaction';
-import { Content, FunctionCall, Part } from '@google/genai';
+import { 
+   Content, 
+   FunctionCall, 
+   HarmBlockThreshold, 
+   HarmCategory, 
+   Part 
+} from '@google/genai';
 
 const SYSTEM_INSTRUCTION = `
    [Role]
@@ -206,6 +212,12 @@ export async function* handleChatStreaming(
                thinkingConfig: {
                   includeThoughts: isThinking,
                },
+               safetySettings: [
+                  {
+                     category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                     threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+                  },
+               ],
             },
          });
 
