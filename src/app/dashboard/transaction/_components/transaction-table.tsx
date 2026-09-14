@@ -27,6 +27,7 @@ import { cn, convertToIDR } from '@/lib/utils';
 
 import DeleteTransactionDialog from './delete-transaction-dialog';
 import UpdateTransactionDialog from './update-transaction-dialog';
+import { Ring } from '@/components/ring';
 
 const TABLE_HEADER = [
    '#', 'Date', 'Description',
@@ -148,7 +149,9 @@ export default function TransactionTable({
                         ))}
                   </TableBody>
                   {isLoading && (
-                     <TableCaption className="mb-4">Loading...</TableCaption>
+                     <TableCaption className="mb-4">
+                        <Ring className='size-10' />
+                     </TableCaption>
                   )}
                   {!isLoading && transactions?.data?.length === 0 && (
                      <TableCaption className="mb-4">

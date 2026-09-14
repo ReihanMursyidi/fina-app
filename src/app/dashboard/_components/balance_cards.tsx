@@ -1,5 +1,6 @@
 'use client';
 
+import { Ring } from '@/components/ring';
 import {
   Card,
   CardDescription,
@@ -7,17 +8,17 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { getBalanceSummary } from '@/features/transaction/action';
 import { convertToIDR } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
 import { TrendingDownIcon, TrendingUpIcon, WalletIcon } from 'lucide-react';
 
-export function BalanceCards({
-  data, error,
-}: {
-  data:
-    | { savings: number; totalIncome: number; totalExpense: number }
-    | undefined;
-  error: unknown;
-}) {
+export function BalanceCards() {
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['balance'],
+    queryFn: () => getBalanceSummary(),
+  });
+
   if (error) {
     return (
       <div className="w-full p-4 text-sm border rounded-lg border-destructive/50 text-destructive bg-destructive/10">
@@ -35,11 +36,18 @@ export function BalanceCards({
             Savings
           </CardTitle>
           <CardDescription className="text-lg lg:text-2xl font-semibold text-secondary-foreground">
-            {convertToIDR(Number(data?.savings || 0))}
+            {isLoading ? (
+              <Ring className="size-8" />
+            ) : data ? (
+              convertToIDR(Number(data.savings || 0))
+            ) : (
+              'No data available'
+            )}
           </CardDescription>
         </CardHeader>
         <CardFooter className="text-sm">Savings for all time</CardFooter>
       </Card>
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-primary">
@@ -47,11 +55,18 @@ export function BalanceCards({
             Incomes
           </CardTitle>
           <CardDescription className="text-lg lg:text-2xl font-semibold text-secondary-foreground">
-            {convertToIDR(Number(data?.totalIncome || 0))}
+            {isLoading ? (
+              <Ring className="size-8" />
+            ) : data ? (
+              convertToIDR(Number(data.totalIncome || 0))
+            ) : (
+              'No data available'
+            )}
           </CardDescription>
         </CardHeader>
         <CardFooter className="text-sm">Total Incomes for all time</CardFooter>
       </Card>
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-primary">
@@ -59,7 +74,13 @@ export function BalanceCards({
             Expenses
           </CardTitle>
           <CardDescription className="text-lg lg:text-2xl font-semibold text-secondary-foreground">
-            {convertToIDR(Number(data?.totalExpense || 0))}
+            {isLoading ? (
+              <Ring className="size-8" />
+            ) : data ? (
+              convertToIDR(Number(data.totalExpense || 0))
+            ) : (
+              'No data available'
+            )}
           </CardDescription>
         </CardHeader>
         <CardFooter className="text-sm">Total expenses for all time</CardFooter>
