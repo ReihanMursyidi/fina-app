@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Outfit } from "next/font/google";
+import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from '@/components/ui/tooltip';
 import QueryProvider from '@/providers/query-client';
 import { Toaster } from "@/components/ui/sonner";
 
-const outfit = Outfit({subsets:['latin'],variable:'--font-sans'});
+const roboto = Roboto({subsets:['latin'],variable:'--font-sans'});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,13 +32,12 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn(
-        'h-full',
-        'antialiased',
-        geistSans.variable,
-        geistMono.variable,
-        'font-sans',
-        outfit.variable,
-      )}
+              'h-full',
+              'antialiased',
+              geistSans.variable,
+              geistMono.variable,
+              'font-sans',
+              "font-sans", roboto.variable)}
     >
       <body className="flex flex-col min-h-full" suppressHydrationWarning>
         <QueryProvider>
