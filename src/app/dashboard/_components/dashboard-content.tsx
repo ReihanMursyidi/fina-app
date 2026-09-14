@@ -7,7 +7,7 @@ import { getBalanceSummary } from '@/features/transaction/action';
 import GenerativeContent from './generative-content';
 
 export default function DashboardContent() {
-   const { data, error, refetch } = useQuery({
+   const { refetch } = useQuery({
       queryKey: ['balance'],
       queryFn: () => getBalanceSummary(),
    });
@@ -15,7 +15,7 @@ export default function DashboardContent() {
    return (
       <section id="content" className="space-y-4">
          <WizardInput refetch={refetch} />
-         <BalanceCards data={data} error={error} />
+         <BalanceCards />
          <GenerativeContent />
       </section>
    );

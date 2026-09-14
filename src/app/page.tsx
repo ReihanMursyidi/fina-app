@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen">
-      <CoinsIcon className="text-emerald-700 size-20" />
-      <h1 className="text-emerald-700 text-4xl font-bold">Welcome to Fina</h1>
+      <CoinsIcon className="text-primary size-20" />
+      <h1 className="text-primary text-4xl font-bold">Welcome to Fina</h1>
       <p className="mt-2 text-lg">Your personal finance app with AI</p>
       <Link href="/dashboard">
         <Button className="mt-2" size="lg">
