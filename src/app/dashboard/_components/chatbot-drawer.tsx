@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 
 import Markdown from 'react-markdown';
-import { BotIcon, XIcon, EllipsisIcon, ChevronDownIcon } from "lucide-react";
+import { BotIcon, XIcon, ChevronDownIcon } from "lucide-react";
+import { Typing } from '@/components/typing';
 import { useMutation } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
@@ -140,7 +141,7 @@ export default function ChatbotDrawer() {
       <Drawer direction="right" modal={false}>
          <DrawerTrigger className="fixed bottom-4 right-4" asChild>
             <Button
-               className="rounded-full size-14 hover:bg-primary/30 hover:text-primary shadow-lg"
+               className="rounded-full shadow-lg size-14 hover:bg-primary/30 hover:text-primary"
                size="icon-lg"
                variant="outline"
             >
@@ -148,8 +149,8 @@ export default function ChatbotDrawer() {
             </Button>
          </DrawerTrigger>
 
-         <DrawerContent className="w-screen! md:w-110!">
-            <DrawerHeader className="flex flex-row justify-between border-b pb-4">
+         <DrawerContent className="w-screen! max-w-none! md:w-140! md:max-w-none!">
+            <DrawerHeader className="flex flex-row justify-between pb-4 border-b">
                <div>
                   <DrawerTitle className="font-bold text-primary">
                      AI Financial Advisor
@@ -165,11 +166,11 @@ export default function ChatbotDrawer() {
                </DrawerClose>
             </DrawerHeader>
 
-            <div className="h-full px-4 py-4 overflow-y-auto no-scrollbar bg-slate-50/50 dark:bg-background">
+            <div className="h-full px-4 py-4 pr-2 overflow-y-auto bg-slate-50/50 dark:bg-background">
                {conversation.length > 0 ? (
                   <div
                      ref={chatRef} 
-                     className="flex flex-col h-full gap-6 overflow-x-hidden overflow-y-auto no-scrollbar"
+                     className="flex flex-col h-full gap-6 overflow-x-hidden overflow-y-auto custom-scrollbar"
                   >
                      {conversation.map((message, index) => (
                         <div
@@ -181,7 +182,7 @@ export default function ChatbotDrawer() {
                         >
                            <div
                               className={cn('flex flex-col w-full', {
-                                 'bg-primary/20 text-primary px-5 py-2 rounded-3xl rounded-br-md w-fit max-w-3/4':
+                                 'bg-primary/20 text-primary px-5 py-2 rounded-3xl rounded-br-md w-fit max-w-9/10':
                                     message.role === 'user'
                               })}
                            >
@@ -201,11 +202,11 @@ export default function ChatbotDrawer() {
                                                 <CollapsibleTrigger asChild>
                                                    <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-muted-foreground hover:bg-slate-100 dark:hover:bg-muted">
                                                       Tampilkan alur berpikir
-                                                      <ChevronDownIcon className="size-3 ml-1" />
+                                                      <ChevronDownIcon className="ml-1 size-3" />
                                                    </Button>
                                                 </CollapsibleTrigger>
                                                 <CollapsibleContent>
-                                                   <div className="pl-3 ml-2 mt-2 border-l-2 border-slate-200 dark:border-muted-foreground/30 text-muted-foreground text-xs italic space-y-2">
+                                                   <div className="pl-3 mt-2 ml-2 space-y-2 text-xs italic border-l-2 border-slate-200 dark:border-muted-foreground/30 text-muted-foreground">
                                                       <Markdown>{part.text}</Markdown>
                                                    </div>
                                                 </CollapsibleContent>
@@ -226,21 +227,21 @@ export default function ChatbotDrawer() {
                      ))}
 
                      {isPending && (
-                        <div className="flex items-center animate-pulse">
-                           <EllipsisIcon className="size-8 text-primary/50" />
+                        <div className="flex items-center">
+                           <Typing className="size-8 text-primary/50" />
                         </div>
                      )}
                   </div>
                ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-center gap-2">
-                     <BotIcon className="size-16 text-primary mb-2" />
+                  <div className="flex flex-col items-center justify-center h-full gap-2 text-center">
+                     <BotIcon className="mb-2 size-16 text-primary" />
                      <h2 className="text-2xl font-bold text-foreground">Hello There!</h2>
                      <h4 className="text-sm text-muted-foreground max-w-[80%]">Ask me anything about your finances or investment strategies.</h4>
                   </div>
                )}
             </div>
 
-            <DrawerFooter className="border-t bg-background pt-4">
+            <DrawerFooter className="pt-4 border-t bg-background">
                <ChatbotTextArea
                   isThinking={isThinking}
                   setIsThinking={setIsThinking}
