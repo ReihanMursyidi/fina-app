@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function TransactionPage() {
   return (
-    <div className="p-2 space-y-4">
+    <div className="p-2 space-y-4 custom-scrollbar">
       <section id="header">
         <h1 className="text-4xl font-bold text-primary">Transaction</h1>
         <p>

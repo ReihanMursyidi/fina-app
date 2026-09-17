@@ -39,7 +39,7 @@ export default function RootLayout({
               'font-sans',
               "font-sans", roboto.variable)}
     >
-      <body className="flex flex-col min-h-full" suppressHydrationWarning>
+      <body className="flex flex-col min-h-full custom-scrollbar" suppressHydrationWarning>
         <QueryProvider>
           <TooltipProvider>
             {children}
