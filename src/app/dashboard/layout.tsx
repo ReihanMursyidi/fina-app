@@ -8,7 +8,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     <SidebarProvider>
       <AppSidebar />
       <main className="flex-1 p-4 custom-scrollbar">
-        <SidebarTrigger />
+        <div className="mb-2 md:hidden">
+          <SidebarTrigger />
+        </div>
         {children}
         <ChatbotDrawer />
       </main>

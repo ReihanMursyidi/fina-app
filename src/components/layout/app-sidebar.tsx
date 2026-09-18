@@ -8,7 +8,8 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem
+  SidebarMenuItem,
+  SidebarTrigger
 } from "../ui/sidebar";
 import Link from 'next/link';
 import { BanknoteIcon, CoinsIcon, LayoutDashboardIcon } from 'lucide-react';
@@ -32,18 +33,29 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" variant="floating">
-      <SidebarHeader className="gap-2 flex-row items-center">
+      
+      <SidebarHeader
+        className="flex items-center justify-between gap-2 flex-row
+                    group-data-[collapsible=icon]:flex-col-reverse
+                    group-data-[collapsible=icon]:gap-4 
+                    group-data-[collapsible=icon]:pt-2"
+      >
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link href="/dashboard">
+              <Link href="/">
                 <CoinsIcon className="text-primary size-5!" />
-                <h1 className="text-2xl font-bold text-primary">Fina App</h1>
+                <h1 className="text-2xl font-bold text-primary group-data-[collapsible=icon]:hidden">
+                  Fina App
+                </h1>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+        
+        <SidebarTrigger />
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
