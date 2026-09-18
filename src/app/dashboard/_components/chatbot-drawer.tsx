@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 
 import Markdown from 'react-markdown';
-import { BotIcon, XIcon, ChevronDownIcon } from "lucide-react";
+import { BotMessageSquare, BotIcon, XIcon, ChevronDownIcon } from "lucide-react";
 import { Typing } from '@/components/typing';
 import { useMutation } from "@tanstack/react-query";
 
@@ -152,11 +152,11 @@ export default function ChatbotDrawer() {
       <Drawer direction="right" modal={false}>
          <DrawerTrigger className="fixed bottom-4 right-4" asChild>
             <Button
-               className="rounded-full shadow-lg size-14 hover:bg-primary/30 hover:text-primary"
+               className="rounded-full bg-background shadow-lg size-14 hover:bg-primary hover:text-secondary dark:bg-slate-800 dark:hover:bg-primary"
                size="icon-lg"
                variant="outline"
             >
-               <BotIcon className="size-6" />
+               <BotMessageSquare className="size-6" />
             </Button>
          </DrawerTrigger>
 

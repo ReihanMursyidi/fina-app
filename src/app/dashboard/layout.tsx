@@ -2,18 +2,24 @@ import { AppSidebar } from '@/components/layout/app-sidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { ReactNode } from 'react';
 import ChatbotDrawer from './_components/chatbot-drawer';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { ModeToggle } from '@/components/mode-toggle';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <main className="flex-1 p-4 custom-scrollbar">
-        <div className="mb-2 md:hidden">
-          <SidebarTrigger />
+    <TooltipProvider>
+      <SidebarProvider>
+        <AppSidebar />
+        
+        <main className="flex-1 p-4 custom-scrollbar">
+          <SidebarTrigger className="mb-2 md:hidden" />
+          {children}
+          <ChatbotDrawer />
+        </main>
+        <div className="fixed top-4 right-4">
+          <ModeToggle />
         </div>
-        {children}
-        <ChatbotDrawer />
-      </main>
-    </SidebarProvider>
+      </SidebarProvider>
+    </TooltipProvider>
   );
 }
