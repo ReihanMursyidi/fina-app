@@ -30,15 +30,13 @@ import { Conversation } from "@/app/types/ai";
 
 export default function ChatbotDrawer() {
    const chatRef = useRef<HTMLDivElement>(null);
-   const [conversation, setConversation] = useState<
-      Conversation[]
-   >([]);
+   const [conversation, setConversation] = useState<Conversation[]>([]);
    
    const [isThinking, setIsThinking] = useState<boolean>(false);
    const [mode, setMode] = useState<'general' | 'personal'>('general');
 
    const { mutate: handleChatMutation, isPending } = useMutation({
-      mutationFn: async ({ isThinking }: { isThinking: boolean }) => {
+      mutationFn: async ({ isThinking, chatHistory }: { isThinking: boolean; chatHistory: Conversation[] }) => {
          if (isThinking) {
             setConversation((prev) => [
                ...prev,
@@ -46,7 +44,7 @@ export default function ChatbotDrawer() {
             ]);
 
             const response = await handleChatStreaming(
-               conversation,
+               chatHistory,
                isThinking,
                mode,
             );
@@ -85,7 +83,7 @@ export default function ChatbotDrawer() {
             ]);
 
             const response = await handleChatStreaming(
-               conversation,
+               chatHistory,
                isThinking,
                mode,
             );
@@ -112,20 +110,33 @@ export default function ChatbotDrawer() {
       onError: (error) => {
          const botMessage = {
             role: 'model',
-            parts: [{ text: 'Terjadi kesalahan: ' + error.message }],
+            parts: [{ text: 'An unexpected error has occured: ' + error.message }],
          };
          setConversation((prev) => [...prev, botMessage]);
       },
    });
 
    function sendMessage(message: string) {
-      const newMessage = {
-         role: 'user',
-         parts: [{ text: message }],
-      };
+      const newMessage = { role: 'user', parts: [{ text: message }] };
+      const updatedConversation = [...conversation, newMessage];
+      
+      setConversation(updatedConversation);
 
-      setConversation((prev) => [...prev, newMessage]);
-      handleChatMutation({ isThinking });
+      const MAX_CHARS = 3000;
+      let currentCharCount = 0;
+      const historyForAI: typeof updatedConversation = [];
+
+      for (let i = updatedConversation.length - 1; i >= 0; i--) {
+         const msg = updatedConversation[i];
+         const msgLength = msg.parts.reduce((acc, part) => acc + (part.text?.length || 0), 0);
+         if (currentCharCount + msgLength > MAX_CHARS && historyForAI.length > 0) {
+            break;
+         }
+
+         historyForAI.unshift(msg);
+         currentCharCount += msgLength;
+      }
+      handleChatMutation({ isThinking, chatHistory: historyForAI });
    }
 
    useEffect(() => {
