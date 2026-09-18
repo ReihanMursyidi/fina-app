@@ -80,7 +80,7 @@ export default function ChatbotTextarea({
                   variant="outline"
                   pressed={isThinking}
                   onPressedChange={setIsThinking}
-                  className={cn('text-xs px-0 py-0 h-8 w-8', {
+                  className={cn('text-xs px-0 py-0 h-8 w-8 border-transparent hover:border-input data-[state=on]:border-input', {
                      'bg-primary/20!': isThinking,
                   })}
                >
