@@ -1,6 +1,6 @@
 'use client';
 
-import { Ring } from '@/components/ring';
+import { TextDots } from '@/components/text-dots';
 import {
   Card,
   CardDescription,
@@ -37,7 +37,9 @@ export function BalanceCards() {
           </CardTitle>
           <CardDescription className="text-lg lg:text-2xl font-semibold text-secondary-foreground">
             {isLoading ? (
-              <Ring className="size-8" />
+              <TextDots>
+                Calculating
+              </TextDots>
             ) : data ? (
               convertToIDR(Number(data.savings || 0))
             ) : (
@@ -56,7 +58,9 @@ export function BalanceCards() {
           </CardTitle>
           <CardDescription className="text-lg lg:text-2xl font-semibold text-secondary-foreground">
             {isLoading ? (
-              <Ring className="size-8" />
+              <TextDots>
+                Calculating
+              </TextDots>
             ) : data ? (
               convertToIDR(Number(data.totalIncome || 0))
             ) : (
@@ -75,7 +79,9 @@ export function BalanceCards() {
           </CardTitle>
           <CardDescription className="text-lg lg:text-2xl font-semibold text-secondary-foreground">
             {isLoading ? (
-              <Ring className="size-8" />
+              <TextDots>
+                Calculating
+              </TextDots>
             ) : data ? (
               convertToIDR(Number(data.totalExpense || 0))
             ) : (
