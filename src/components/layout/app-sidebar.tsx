@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { 
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
@@ -14,6 +15,7 @@ import {
 import Link from 'next/link';
 import { BanknoteIcon, CoinsIcon, LayoutDashboardIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ModeToggle } from "../mode-toggle";
 
 const sidebarItems = [
   {
@@ -80,7 +82,13 @@ export function AppSidebar() {
             ))}
           </SidebarMenu>
         </SidebarGroup>
+        
       </SidebarContent>
+      <SidebarFooter>
+        <div className="flex w-full justify-end">
+          <ModeToggle />
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }
