@@ -49,72 +49,97 @@
 }
 
 :root {
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0.008 326);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0.008 326);
-  --primary: oklch(0.496 0.265 301.924);
-  --primary-foreground: oklch(0.977 0.014 308.299);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.96 0.003 325.6);
-  --muted-foreground: oklch(0.542 0.034 322.5);
-  --accent: oklch(0.96 0.003 325.6);
-  --accent-foreground: oklch(0.212 0.019 322.12);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0.005 325.62);
-  --input: oklch(0.922 0.005 325.62);
-  --ring: oklch(0.711 0.019 323.02);
-  --chart-1: oklch(0.785 0.115 274.713);
-  --chart-2: oklch(0.585 0.233 277.117);
-  --chart-3: oklch(0.511 0.262 276.966);
-  --chart-4: oklch(0.457 0.24 277.023);
-  --chart-5: oklch(0.398 0.195 277.366);
+  /* Surface & Typography (Light Mode) */
+  --background: #f8fbff; /* Putih dengan sentuhan biru es (Ice Blue) */
+  --foreground: #0f2855; /* Navy sebagai warna teks utama */
+  --card: #ffffff;
+  --card-foreground: #0f2855;
+  --popover: #ffffff;
+  --popover-foreground: #0f2855;
+
+  /* Brand / Primary Palette */
+  --primary: #2e77ff;
+  --primary-foreground: #ffffff; /* Putih sangat jelas di atas biru elektrik */
+
+  /* Secondary & Accent Palette */
+  --secondary: #c6dcfe; /* Tint biru paling muda */
+  --secondary-foreground: #1f4faa; /* Mid-tone */
+  --muted: #f0f5ff;
+  --muted-foreground: #5c8ae6; /* Biru pudar untuk teks sekunder */
+  --accent: #e6f0ff;
+  --accent-foreground: #0f2855;
+
+  /* UI Boundaries & Interactions */
+  --destructive: #ef4444; 
+  --destructive-foreground: #ffffff;
+  --border: #cce0ff; /* Garis batas biru muda */
+  --input: #cce0ff;
+  --ring: #2e77ff;
+
+  /* Charts Monochromatic Palette (Trustworthy Blues) */
+  --chart-1: #2e77ff;
+  --chart-2: #1f4faa;
+  --chart-3: #5c8ae6;
+  --chart-4: #0f2855;
+  --chart-5: #99c2ff;
+
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0.008 326);
-  --sidebar-primary: oklch(0.558 0.288 302.321);
-  --sidebar-primary-foreground: oklch(0.977 0.014 308.299);
-  --sidebar-accent: oklch(0.96 0.003 325.6);
-  --sidebar-accent-foreground: oklch(0.212 0.019 322.12);
-  --sidebar-border: oklch(0.922 0.005 325.62);
-  --sidebar-ring: oklch(0.711 0.019 323.02);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0.008 326);
+
+  /* Sidebar Component */
+  --sidebar: #f2f7ff;
+  --sidebar-foreground: #0f2855;
+  --sidebar-primary: #2e77ff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e6f0ff;
+  --sidebar-accent-foreground: #0f2855;
+  --sidebar-border: #cce0ff;
+  --sidebar-ring: #2e77ff;
 }
 
 .dark {
-  --background: oklch(0.145 0.008 326);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.212 0.019 322.12);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.212 0.019 322.12);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.438 0.218 303.724);
-  --primary-foreground: oklch(0.977 0.014 308.299);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.263 0.024 320.12);
-  --muted-foreground: oklch(0.711 0.019 323.02);
-  --accent: oklch(0.263 0.024 320.12);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.542 0.034 322.5);
-  --chart-1: oklch(0.785 0.115 274.713);
-  --chart-2: oklch(0.585 0.233 277.117);
-  --chart-3: oklch(0.511 0.262 276.966);
-  --chart-4: oklch(0.457 0.24 277.023);
-  --chart-5: oklch(0.398 0.195 277.366);
-  --sidebar: oklch(0.212 0.019 322.12);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.627 0.265 303.9);
-  --sidebar-primary-foreground: oklch(0.977 0.014 308.299);
-  --sidebar-accent: oklch(0.263 0.024 320.12);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.542 0.034 322.5);
+  /* Surface & Typography (Dark Mode) */
+  --background: #08152e; /* Navy sangat gelap, hampir hitam */
+  --foreground: #e6f0ff; /* Ice blue muda untuk teks agar tidak menyilaukan */
+  --card: #0f2855; /* Menggunakan Darkest color sebagai card background */
+  --card-foreground: #e6f0ff;
+  --popover: #0f2855;
+  --popover-foreground: #e6f0ff;
+
+  /* Brand / Primary Palette */
+  --primary: #2e77ff; /* Primary di dark mode tetap "pop" */
+  --primary-foreground: #ffffff;
+
+  /* Secondary & Accent Palette */
+  --secondary: #1f4faa; /* Mid-tone untuk elemen sekunder */
+  --secondary-foreground: #ffffff;
+  --muted: #163673; 
+  --muted-foreground: #80adff;
+  --accent: #1f4faa;
+  --accent-foreground: #ffffff;
+
+  /* UI Boundaries & Interactions */
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #163673;
+  --input: #163673;
+  --ring: #2e77ff;
+
+  /* Charts Monochromatic Palette */
+  --chart-1: #2e77ff;
+  --chart-2: #66a3ff;
+  --chart-3: #1f4faa;
+  --chart-4: #99c2ff;
+  --chart-5: #0f2855; /* Kontras di dark mode */
+
+  /* Sidebar Component */
+  --sidebar: #0a1b3b;
+  --sidebar-foreground: #e6f0ff;
+  --sidebar-primary: #2e77ff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #163673;
+  --sidebar-accent-foreground: #e6f0ff;
+  --sidebar-border: #0f2855;
+  --sidebar-ring: #2e77ff;
 }
 
 @layer base {

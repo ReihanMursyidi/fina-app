@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           {children}
           <ChatbotDrawer />
         </main>
-        <div className="fixed top-4 right-4">
+        <div className="mt-4 mr-4">
           <ModeToggle />
         </div>
       </SidebarProvider>

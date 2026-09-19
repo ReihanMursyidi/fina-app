@@ -134,7 +134,7 @@ export default function GenerativeContent() {
             <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
                <CardTitle className="flex items-center gap-2 text-xl">
                   <SparklesIcon className="size-5 text-primary" />
-                  Generative AI Insight
+                  Generative AI Insight <span className='text-muted-foreground'>BETA</span>
                </CardTitle>
             <form
                className="flex flex-col gap-2 lg:flex-row lg:items-center"
