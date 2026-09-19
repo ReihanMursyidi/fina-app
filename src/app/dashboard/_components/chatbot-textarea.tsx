@@ -54,7 +54,7 @@ export default function ChatbotTextarea({
    return (
       <form
          onSubmit={form.handleSubmit(onSubmit)}
-         className="flex flex-col p-2 bg-secondary rounded-2xl"
+         className="flex flex-col w-full p-3 bg-background rounded-2xl"
       >
          <Controller
             control={form.control}
@@ -66,14 +66,14 @@ export default function ChatbotTextarea({
                      id="form-message"
                      placeholder="Ask AI Advisor here"
                      autoComplete="off"
-                     className="h-16 px-3 py-2 rounded-md resize-none focus:outline-none"
+                     className="h-16 w-full px-3 py-2 bg-transparent resize-none focus:outline-none"
                      onKeyDown={handleKeyDown}
                   />
                </Field>
             )}
          />
 
-         <div className="flex items-center justify-between">
+         <div className="flex items-center justify-between mt-2">
             <div className="flex items-center gap-2">
                <Toggle
                   size="sm"
@@ -81,7 +81,7 @@ export default function ChatbotTextarea({
                   pressed={isThinking}
                   onPressedChange={setIsThinking}
                   className={cn('text-xs px-0 py-0 h-8 w-8 border-transparent hover:border-input data-[state=on]:border-input', {
-                     'bg-primary/20!': isThinking,
+                     'bg-primary!': isThinking,
                   })}
                >
                   <BrainIcon className="size-4" />
@@ -104,7 +104,7 @@ export default function ChatbotTextarea({
                   type="submit"
                   size="icon"
                   variant="ghost"
-                  className="cursor-pointer text-primary hover:bg-primary/10 hover:text-primary disabled:bg-transparent"
+                  className="cursor-pointer text-foreground hover:bg-transparent hover:text-foreground disabled:bg-transparent"
                >
                   <SendIcon className="size-5" />
                </Button>

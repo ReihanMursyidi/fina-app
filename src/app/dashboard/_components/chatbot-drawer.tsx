@@ -177,7 +177,7 @@ export default function ChatbotDrawer() {
                </DrawerClose>
             </DrawerHeader>
 
-            <div className="h-full px-4 py-4 pr-2 overflow-y-auto bg-slate-50/50 dark:bg-background">
+            <div className="h-full px-4 py-4 pr-2 overflow-y-auto rounded-2xl bg-slate-50/50 dark:bg-background ">
                {conversation.length > 0 ? (
                   <div
                      ref={chatRef} 
@@ -252,7 +252,7 @@ export default function ChatbotDrawer() {
                )}
             </div>
 
-            <DrawerFooter className="pt-4 border-t bg-background">
+            <DrawerFooter className="p-0 border-t">
                <ChatbotTextArea
                   isThinking={isThinking}
                   setIsThinking={setIsThinking}
