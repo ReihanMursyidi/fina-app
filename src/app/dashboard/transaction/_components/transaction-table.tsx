@@ -110,7 +110,7 @@ export default function TransactionTable({
                                  className={cn(
                                     'font-semibold',
                                     transaction.type === 'expense'
-                                       ? 'text-destructive'
+                                       ? 'text-red-500'
                                        : 'text-green-500',
                                  )}
                               >
