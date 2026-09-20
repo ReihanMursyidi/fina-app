@@ -13,7 +13,7 @@ export default function DashboardContent() {
    });
 
    return (
-      <section id="content" className="space-y-4">
+      <section id="content" className="custom-scrollbar space-y-4">
          <WizardInput refetch={refetch} />
          <BalanceCards />
          <GenerativeContent />

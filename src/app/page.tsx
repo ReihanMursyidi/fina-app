@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="custom-scrollbar flex flex-col items-center justify-center min-h-screen">
+    <main className="flex flex-col items-center justify-center min-h-screen">
       <CoinsIcon className="text-primary size-20" />
-      <h1 className="text-primary text-4xl font-bold">Welcome to Fina</h1>
+      <h1 className="text-4xl font-bold text-primary">Welcome to Fina</h1>
       <p className="mt-2 text-lg">Your personal finance app with AI</p>
       <Link href="/dashboard">
         <Button className="mt-2" size="lg">

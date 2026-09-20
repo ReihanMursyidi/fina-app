@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function DashboardPage() {
   return (
-    <div className="p-2 space-y-4 custom-scrollbar">
+    <div className="custom-scrollbar p-2 space-y-4">
       <section id="header">
         <h1 className="text-4xl font-bold text-primary">Dashboard</h1>
         <p>

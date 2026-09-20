@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import { handleChatStreaming } from "@/features/ai/chat";
 import ChatbotTextArea from "./chatbot-textarea";
 import { Conversation } from "@/app/types/ai";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function ChatbotDrawer() {
    const chatRef = useRef<HTMLDivElement>(null);
@@ -152,116 +153,122 @@ export default function ChatbotDrawer() {
       <Drawer direction="right" modal={false}>
          <DrawerTrigger className="fixed bottom-4 right-4" asChild>
             <Button
-               className="rounded-full bg-background shadow-lg size-14 hover:bg-primary hover:text-secondary dark:bg-slate-800 dark:hover:bg-primary"
+               className="rounded-full shadow-lg bg-background size-14 hover:bg-primary hover:text-secondary dark:bg-slate-800 dark:hover:bg-primary"
                size="icon-lg"
                variant="outline"
             >
                <BotMessageSquare className="size-6" />
             </Button>
          </DrawerTrigger>
-
-         <DrawerContent className="w-screen! max-w-none! md:w-140! md:max-w-none!">
-            <DrawerHeader className="flex flex-row justify-between pb-4 border-b">
-               <div>
-                  <DrawerTitle className="font-bold text-primary">
-                     AI Financial Advisor
-                  </DrawerTitle>
-                  <DrawerDescription>
-                     Get personalized financial advice.
-                  </DrawerDescription>
-               </div>
-               <DrawerClose asChild>
-                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:bg-muted">
-                     <XIcon />
-                  </Button>
-               </DrawerClose>
-            </DrawerHeader>
-
-            <div className="h-full px-4 py-4 pr-2 overflow-y-auto rounded-2xl bg-slate-50/50 dark:bg-background ">
-               {conversation.length > 0 ? (
-                  <div
-                     ref={chatRef} 
-                     className="flex flex-col h-full gap-6 overflow-x-hidden overflow-y-auto custom-scrollbar"
-                  >
-                     {conversation.map((message, index) => (
+         
+            <DrawerContent className="w-screen! max-w-none! md:w-110! md:max-w-none!">
+               <DrawerHeader className="flex flex-row justify-between pb-4 border-b">
+                  <div>
+                     <DrawerTitle className="font-bold text-primary">
+                        AI Financial Advisor
+                     </DrawerTitle>
+                     <DrawerDescription>
+                        Get personalized financial advice.
+                     </DrawerDescription>
+                  </div>
+                  <DrawerClose asChild>
+                     <Button variant="ghost" size="icon" className="text-muted-foreground hover:bg-muted">
+                        <XIcon />
+                     </Button>
+                  </DrawerClose>
+               </DrawerHeader>
+               <ScrollArea
+                  className={cn(
+                     "min-h-0 flex-1 bg-background rounded-2xl h-full",
+                     conversation.length === 0 && "overflow-hidden"
+                  )}
+               >
+                  <div className="flex flex-col w-full h-full min-h-[50vh] px-4 py-4 rounded-2xl bg-slate-50/50 dark:bg-background">
+                     {conversation.length > 0 ? (
                         <div
-                           key={`conversation-${index}`}
-                           className={cn(
-                              'flex flex-col gap-1.5 w-full',
-                              message.role === 'model' ? 'items-start' : 'items-end',
-                           )}
+                           ref={chatRef}
+                           className="flex flex-col min-h-full gap-6 overflow-x-hidden"
                         >
-                           <div
-                              className={cn('flex flex-col w-full', {
-                                 'bg-primary/20 text-primary px-5 py-2 rounded-3xl rounded-br-md w-fit max-w-9/10':
-                                    message.role === 'user'
-                              })}
-                           >
-                              {message.role === 'model' && (
-                                 <div className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider ml-1">
-                                    <BotIcon className="size-3.5" />
-                                    AI Advisor
-                                 </div>
-                              )}
+                           {conversation.map((message, index) => (
+                              <div
+                                 key={`conversation-${index}`}
+                                 className={cn(
+                                    'flex flex-col gap-1.5 w-full',
+                                    message.role === 'model' ? 'items-start' : 'items-end',
+                                 )}
+                              >
+                                 <div
+                                    className={cn('flex flex-col w-full', {
+                                       'bg-primary/20 text-primary px-5 py-2 rounded-3xl rounded-br-md w-fit max-w-9/10':
+                                          message.role === 'user'
+                                    })}
+                                 >
+                                    {message.role === 'model' && (
+                                       <div className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider ml-1">
+                                          <BotIcon className="size-3.5" />
+                                          AI Advisor
+                                       </div>
+                                    )}
 
-                              {message.role === 'model' ? (
-                                 <div className="response-ai">
-                                    {message.parts.map((part, partIndex) => (
-                                       <div key={`response-ai-${index}-${partIndex}`}>
-                                          {part.thought ? (
-                                             <Collapsible className="mb-2">
-                                                <CollapsibleTrigger asChild>
-                                                   <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-muted-foreground hover:bg-slate-100 dark:hover:bg-muted">
-                                                      Tampilkan alur berpikir
-                                                      <ChevronDownIcon className="ml-1 size-3" />
-                                                   </Button>
-                                                </CollapsibleTrigger>
-                                                <CollapsibleContent>
-                                                   <div className="pl-3 mt-2 ml-2 space-y-2 text-xs italic border-l-2 border-slate-200 dark:border-muted-foreground/30 text-muted-foreground">
+                                    {message.role === 'model' ? (
+                                       <div className="response-ai">
+                                          {message.parts.map((part, partIndex) => (
+                                             <div key={`response-ai-${index}-${partIndex}`}>
+                                                {part.thought ? (
+                                                   <Collapsible className="mb-2">
+                                                      <CollapsibleTrigger asChild>
+                                                         <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-muted-foreground hover:bg-slate-100 dark:hover:bg-muted">
+                                                            Tampilkan alur berpikir
+                                                            <ChevronDownIcon className="ml-1 size-3" />
+                                                         </Button>
+                                                      </CollapsibleTrigger>
+                                                      <CollapsibleContent>
+                                                         <div className="pl-3 mt-2 ml-2 space-y-2 text-xs italic border-l-2 border-slate-200 dark:border-muted-foreground/30 text-muted-foreground">
+                                                            <Markdown>{part.text}</Markdown>
+                                                         </div>
+                                                      </CollapsibleContent>
+                                                   </Collapsible>
+                                                ) : (
+                                                   <div className="[&>p]:mb-3 [&>p:last-child]:mb-0 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-3 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:mb-3 [&>h3]:font-bold [&>h3]:text-base [&>h3]:mb-2">
                                                       <Markdown>{part.text}</Markdown>
                                                    </div>
-                                                </CollapsibleContent>
-                                             </Collapsible>
-                                          ) : (
-                                             <div className="[&>p]:mb-3 [&>p:last-child]:mb-0 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-3 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:mb-3 [&>h3]:font-bold [&>h3]:text-base [&>h3]:mb-2">
-                                                <Markdown>{part.text}</Markdown>
+                                                )}
                                              </div>
-                                          )}
+                                          ))}
                                        </div>
-                                    ))}
+                                    ) : (
+                                       message.parts[0].text
+                                    )}
                                  </div>
-                              ) : (
-                                 message.parts[0].text
-                              )}
-                           </div>
-                        </div>
-                     ))}
+                              </div>
+                           ))}
 
-                     {isPending && (
-                        <div className="flex items-center">
-                           <Typing className="size-8 text-primary/50" />
+                           {isPending && (
+                              <div className="flex items-center">
+                                 <Typing className="size-8 text-primary/50" />
+                              </div>
+                           )}
+                        </div>
+                     ) : (
+                        <div className="flex flex-col items-center justify-center flex-1 w-full h-full gap-2 my-auto text-center">
+                           <BotIcon className="mb-2 size-16 text-primary" />
+                           <h2 className="text-2xl font-bold text-center text-foreground">Hello There!</h2>
+                           <h4 className="max-w-[80%] text-center text-sm text-muted-foreground">Ask me anything about your finances or investment strategies.</h4>
                         </div>
                      )}
                   </div>
-               ) : (
-                  <div className="flex flex-col items-center justify-center h-full gap-2 text-center">
-                     <BotIcon className="mb-2 size-16 text-primary" />
-                     <h2 className="text-2xl font-bold text-foreground">Hello There!</h2>
-                     <h4 className="text-sm text-muted-foreground max-w-[80%]">Ask me anything about your finances or investment strategies.</h4>
-                  </div>
-               )}
-            </div>
-
-            <DrawerFooter className="p-0 border-t">
-               <ChatbotTextArea
-                  isThinking={isThinking}
-                  setIsThinking={setIsThinking}
-                  sendMessage={sendMessage} 
-                  mode={mode}
-                  setMode={setMode}
-               />
-            </DrawerFooter>
-         </DrawerContent>
+               </ScrollArea>
+               <DrawerFooter className="p-0">
+                  <ChatbotTextArea
+                     isThinking={isThinking}
+                     setIsThinking={setIsThinking}
+                     sendMessage={sendMessage} 
+                     mode={mode}
+                     setMode={setMode}
+                  />
+               </DrawerFooter>
+            </DrawerContent>
+         
       </Drawer>
    );
 }

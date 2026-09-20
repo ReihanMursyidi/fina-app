@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { ReactNode } from 'react';
 import ChatbotDrawer from './_components/chatbot-drawer';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
@@ -10,11 +11,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <SidebarProvider>
         <AppSidebar />
         
-        <main className="min-w-0 flex-1 p-4 custom-scrollbar">
-          <SidebarTrigger className="mb-2 md:hidden" />
-          {children}
-          <ChatbotDrawer />
-        </main>
+        <ScrollArea className="flex-1 h-screen bg-background">
+          <div className="p-4">
+            <SidebarTrigger className="mb-2 md:hidden" />
+            {children}
+            <ChatbotDrawer />
+          </div>
+        </ScrollArea>
         
       </SidebarProvider>
     </TooltipProvider>
