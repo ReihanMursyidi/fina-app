@@ -32,7 +32,7 @@ export function BalanceCards() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-primary">
-            <WalletIcon className="size-4" />
+            <WalletIcon className="size-4 text-yellow-500" />
             Savings
           </CardTitle>
           <CardDescription className="text-lg lg:text-2xl font-semibold text-secondary-foreground">
@@ -53,7 +53,7 @@ export function BalanceCards() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-primary">
-            <TrendingUpIcon className="size-4" />
+            <TrendingUpIcon className="size-4 text-green-500" />
             Incomes
           </CardTitle>
           <CardDescription className="text-lg lg:text-2xl font-semibold text-secondary-foreground">
@@ -74,7 +74,7 @@ export function BalanceCards() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-primary">
-            <TrendingDownIcon className="size-4" />
+            <TrendingDownIcon className="size-4 text-red-500" />
             Expenses
           </CardTitle>
           <CardDescription className="text-lg lg:text-2xl font-semibold text-secondary-foreground">
