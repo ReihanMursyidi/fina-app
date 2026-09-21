@@ -1,14 +1,28 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ['10.26.1.111'],
-  /* config options here */
-  reactCompiler: true,
+  allowedDevOrigins: ["*"],
+  devIndicators: {
+    position: 'bottom-right'
+  },
   experimental: {
     serverActions: {
-      bodySizeLimit: '5mb',
-    }
-  }
+      bodySizeLimit: "5mb",
+    },
+    optimizePackageImports: [
+      'lucide-react',
+      '@radix-ui', 
+      'date-fns', 
+      'shadcn',
+      'sonner',
+      'zod'
+    ],
+  },
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
 };
 
 export default nextConfig;
