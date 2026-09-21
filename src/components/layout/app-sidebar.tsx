@@ -82,8 +82,8 @@ export function AppSidebar() {
             ))}
           </SidebarMenu>
         </SidebarGroup>
-        
       </SidebarContent>
+
       <SidebarFooter>
         <div className="flex w-full justify-end">
           <ModeToggle />

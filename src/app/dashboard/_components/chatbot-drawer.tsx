@@ -41,7 +41,12 @@ export default function ChatbotDrawer() {
          if (isThinking) {
             setConversation((prev) => [
                ...prev,
-               { role: 'model', parts: [{ thought: true, text: '' }, { text: '' }] },
+               { 
+                  role: 'model', 
+                  parts: [
+                     { thought: true, text: '' },
+                     { text: '' }],
+               },
             ]);
 
             const response = await handleChatStreaming(
