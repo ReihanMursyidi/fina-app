@@ -174,7 +174,15 @@ export async function handleWizardTools(formData: FormData) {
                      break;
                   
                   case 'delete_transaction':
-                     await deleteTransaction(`${args.id}`);
+                     const data = await findEmbedding(JSON.stringify(args), 0.3, 1);
+                     
+                     // TAMBAHKAN VALIDASI INI 👇
+                     if (!data || data.length === 0) {
+                        throw new Error('Transaksi yang ingin dihapus tidak ditemukan di database.');
+                     }
+                     
+                     const deletedData = data[0];
+                     await deleteTransaction(deletedData.id);
                      break;
                      
                   case 'update_transaction':
