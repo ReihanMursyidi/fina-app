@@ -128,7 +128,7 @@ export default function WizardInput({ refetch }: { refetch: () => void }) {
                                  ? 'Listening...'
                                  : isPending && !field.value
                                     ? 'Processing your request...'
-                                    : 'manage your transaction here'
+                                    : 'Manage your transaction with AI'
                            }
                            autoComplete="off"
                            className="h-14 focus:outline-none"
