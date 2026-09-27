@@ -277,10 +277,10 @@ export default function GenerativeContent() {
                                  )}
                                  outerRadius={100}
                                  dataKey="value"
-                                 shape={(props, index) => (
+                                 shape={(props) => (
                                     <Sector
                                        {...props}
-                                       fill={COLORS[index % COLORS.length]}
+                                       fill={COLORS[props.index % COLORS.length]}
                                     />
                                  )}
                               />
