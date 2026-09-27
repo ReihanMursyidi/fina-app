@@ -89,6 +89,24 @@ export default function Home() {
         </CardHeader>
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {isRegister && (
+              <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="johndoe"
+                  disabled={isPending}
+                  {...form.register('username')}
+                />
+                {form.formState.errors.username && (
+                  <p className="text-xs text-destructive">
+                    {form.formState.errors.username.message}
+                  </p>
+                )}
+              </div>
+            )}
+            
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input

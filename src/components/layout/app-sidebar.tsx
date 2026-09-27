@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { BanknoteIcon, CoinsIcon, LayoutDashboardIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ModeToggle } from "../mode-toggle";
+import { UserProfile } from "../user-profile";
 
 const sidebarItems = [
   {
@@ -44,14 +45,12 @@ export function AppSidebar() {
       >
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href="/">
-                <CoinsIcon className="text-primary size-5!" />
-                <h1 className="text-2xl font-bold text-primary group-data-[collapsible=icon]:hidden">
-                  Fina App
-                </h1>
-              </Link>
-            </SidebarMenuButton>
+            <div className="flex items-center gap-2 px-2">
+              <CoinsIcon className="text-primary size-5! group-data-[collapsible=icon]:hidden" />
+              <h1 className="text-2xl font-bold text-primary group-data-[collapsible=icon]:hidden">
+                Fina App
+              </h1>
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
         
@@ -85,6 +84,9 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
+        <div className="flex w-full justify-end">
+          <UserProfile />
+        </div>
         <div className="flex w-full justify-end">
           <ModeToggle />
         </div>

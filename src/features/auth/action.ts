@@ -22,11 +22,20 @@ export async function loginUser(data: AuthInput) {
 }
 
 export async function registerUser(data: AuthInput) {
+   if (!data.username || data.username.length < 3) {
+      throw new Error('Username must be at least 3 characters long.');
+   }
+
    const supabase = await createClient();
 
    const { error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
+      options: {
+         data: {
+            username: data.username,
+         }
+      }
    });
 
    if (error) {
@@ -37,4 +46,21 @@ export async function registerUser(data: AuthInput) {
    }
 
    return 'Registration succeed! Please login.';
+}
+
+export async function logoutUser() {
+   const supabase = await createClient();
+   const { error } = await supabase.auth.signOut();
+   if (error) throw new Error(error.message);
+
+   return 'Logout success!';
+}
+
+export async function getCurrentUser() {
+   const supabase = await createClient();
+   const { data: { user } } = await supabase.auth.getUser();
+
+   if (!user) return null;
+
+   return user.user_metadata?.username || user.email;
 }
