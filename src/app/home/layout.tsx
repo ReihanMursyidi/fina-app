@@ -1,7 +1,7 @@
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { ReactNode } from 'react';
-import ChatbotDrawer from './_components/chatbot-drawer';
+import ChatbotDrawer from './dashboard/_components/chatbot-drawer';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ScrollArea } from '@/components/ui/scroll-area';
 

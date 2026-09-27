@@ -34,7 +34,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createTransaction } from "@/features/transaction/action";
 import { toast } from "sonner";
 import { Button } from '@/components/ui/button';
-import FileDropzoneInput from '../../_components/file-dropzone-input';
+import FileDropzoneInput from '../../dashboard/_components/file-dropzone-input';
 import { CATEGORIES } from '@/constants/transaction-constant';
 
 const formSchema = z.object({

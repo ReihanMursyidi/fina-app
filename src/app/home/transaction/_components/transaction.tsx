@@ -5,7 +5,7 @@ import TransactionTable from './transaction-table';
 import { useQuery } from '@tanstack/react-query';
 import { getTransactions } from '@/features/transaction/action';
 import CreateTransactionCard from './create-transaction-card';
-import WizardInput from '../../_components/wizard-input';
+import WizardInput from '../../dashboard/_components/wizard-input';
 
 export default function Transaction() {
    const [page, setPage] = useState(1);

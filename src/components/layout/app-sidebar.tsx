@@ -22,12 +22,12 @@ const sidebarItems = [
   {
     label: 'Dashboard',
     icon: <LayoutDashboardIcon />,
-    href: '/dashboard',
+    href: '/home/dashboard',
   },
   {
     label: 'Transaction',
     icon: <BanknoteIcon />,
-    href: '/dashboard/transaction',
+    href: '/home/transaction',
   },
 ];
 

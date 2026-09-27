@@ -35,7 +35,7 @@ export default function Home() {
     onSuccess: (message) => {
       toast.success(message);
       if (!isRegister) {
-        router.push('/dashboard');
+        router.push('/home/dashboard');
       } else {
         setIsRegister(false);
         form.reset();
