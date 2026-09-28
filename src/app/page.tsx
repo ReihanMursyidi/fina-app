@@ -8,6 +8,7 @@ import { loginUser, registerUser } from '@/features/auth/action';
 import { authSchema, type AuthInput } from '@/features/auth/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { CoinsIcon, Loader2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -16,6 +17,7 @@ import { toast } from 'sonner';
 
 export default function Home() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
 
@@ -35,6 +37,7 @@ export default function Home() {
     onSuccess: (message) => {
       toast.success(message);
       if (!isRegister) {
+        queryClient.removeQueries();
         router.push('/home/dashboard');
       } else {
         setIsRegister(false);

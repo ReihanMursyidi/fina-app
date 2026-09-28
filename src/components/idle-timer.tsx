@@ -4,6 +4,7 @@ import { logoutUser } from "@/features/auth/action";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface IdleTimerProps {
    timeoutMinutes?: number;
@@ -11,6 +12,7 @@ interface IdleTimerProps {
 
 export function IdleTimer({ timeoutMinutes = 15 }: IdleTimerProps) {
    const router = useRouter();
+   const queryClient = useQueryClient();
    // Menyimpan referensi waktu agar bisa di-reset
    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -18,6 +20,7 @@ export function IdleTimer({ timeoutMinutes = 15 }: IdleTimerProps) {
       const handleLogout = async () => {
          try {
             await logoutUser();
+            queryClient.removeQueries();
             toast.info('Your session expired due to inactivity.');
             router.push('/');
          } catch (error) {
@@ -47,7 +50,7 @@ export function IdleTimer({ timeoutMinutes = 15 }: IdleTimerProps) {
          if (timeoutRef.current) clearTimeout(timeoutRef.current);
          events.forEach((event) => window.removeEventListener(event, resetTimer));
       };
-   }, [router, timeoutMinutes]);
+   }, [queryClient, router, timeoutMinutes]);
 
    return null;
 }

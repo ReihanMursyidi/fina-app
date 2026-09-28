@@ -7,9 +7,11 @@ import { toast } from "sonner";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { LogOut, UserCircle } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function UserProfile() {
    const router = useRouter();
+   const queryClient = useQueryClient();
    const [isLogingOut, setIsLogingOut] = useState(false);
    const [username, setUsername] = useState('Loading...');
 
@@ -25,10 +27,11 @@ export function UserProfile() {
       try {
          setIsLogingOut(true);
          await logoutUser();
+         queryClient.removeQueries();
          toast.success('Logout Success');
 
          router.push('/');
-      } catch (error) {
+      } catch {
          toast.error('Logout Failed');
          setIsLogingOut(false);
       }
