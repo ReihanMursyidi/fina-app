@@ -4,11 +4,17 @@ import { ReactNode } from 'react';
 import ChatbotDrawer from './dashboard/_components/chatbot-drawer';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { IdleTimer } from '@/components/idle-timer';
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+export default function HomeLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <TooltipProvider>
       <SidebarProvider>
+        <IdleTimer timeoutMinutes={15} />
         <AppSidebar />
         
         <ScrollArea className="flex-1 h-screen bg-background">
