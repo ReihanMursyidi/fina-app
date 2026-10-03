@@ -10,13 +10,17 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarTrigger
 } from "../ui/sidebar";
 import Link from 'next/link';
-import { BanknoteIcon, CoinsIcon, LayoutDashboardIcon } from 'lucide-react';
+import { BanknoteIcon, BitcoinIcon, Briefcase, ChevronRightIcon, CoinsIcon, LandmarkIcon, LayoutDashboardIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ModeToggle } from "../mode-toggle";
 import { UserProfile } from "../user-profile";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 
 const sidebarItems = [
   {
@@ -33,6 +37,8 @@ const sidebarItems = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+
+  const FinancialMarketActive = pathname.startsWith('/home/financial-market');
 
   return (
     <Sidebar collapsible="icon" variant="floating">
@@ -79,6 +85,59 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
+
+            <Collapsible
+              asChild
+              defaultOpen={FinancialMarketActive}
+              className='group/collapsible'
+            >
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton
+                    tooltip='Financial Market'
+                    className={cn(
+                      'py-6 px-5 text-md',
+                      FinancialMarketActive ? 'font-semibold text-primary' : ''
+                    )}
+                  >
+                    <LandmarkIcon />
+                    <span>Financial Market</span>
+                    <ChevronRightIcon className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+
+                <CollapsibleContent>
+                <SidebarMenuSub>
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton 
+                      asChild 
+                      isActive={pathname === '/home/financial-market/stocks'}
+                      className="py-4 text-sm"
+                    >
+                      <Link href="/home/financial-market/stocks">
+                        <Briefcase className="size-4" />
+                        <span>Stocks</span>
+                      </Link>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                    
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton 
+                        asChild 
+                        isActive={pathname === '/home/financial-market/crypto'}
+                        className="py-4 text-sm"
+                      >
+                        <Link href="/home/financial-market/crypto">
+                          <BitcoinIcon className="size-4" />
+                          <span>Crypto</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
+            </Collapsible>
+
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
@@ -93,4 +152,4 @@ export function AppSidebar() {
       </SidebarFooter>
     </Sidebar>
   );
-}
+};
